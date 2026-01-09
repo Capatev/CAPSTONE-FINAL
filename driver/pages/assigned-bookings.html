@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assigned Bookings - MVRS Driver</title>
+    <link rel="stylesheet" href="/driver/css/driver.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">DRIVER</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/driver/driver.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/driver/pages/assigned-bookings.html" class="menu-item active">
+                    <span class="icon">📋</span>
+                    <span>Assigned Bookings</span>
+                </a>
+                <a href="/driver/pages/check-in-out.html" class="menu-item">
+                    <span class="icon">✓</span>
+                    <span>Check In/Out</span>
+                </a>
+                <a href="/driver/pages/update-profile.html" class="menu-item">
+                    <span class="icon">👤</span>
+                    <span>Update Profile</span>
+                </a>
+                <a href="/driver/pages/report-issue.html" class="menu-item">
+                    <span class="icon">⚠️</span>
+                    <span>Report Issue</span>
+                </a>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Assigned Bookings</h1>
+                <div class="user-info">
+                    <span class="username" id="driverName">driver-user</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h2>My Bookings</h2>
+                    <div class="filter-section">
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bookings-list" id="bookingsList"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Booking Detail Modal -->
+    <div id="bookingModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Booking Details</h2>
+            <div id="bookingDetailContent"></div>
+        </div>
+    </div>
+
+    <script src="/driver/js/backend.js"></script>
+    <script src="/driver/js/assigned-bookings.js"></script>
+</body>
+</html>

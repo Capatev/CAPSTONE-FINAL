@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Vehicles - Client | MVRMS</title>
+    <link rel="stylesheet" href="/client/css/client.css">
+    <link rel="icon" type="image/png" href="/client/images/logo.png">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/client/images/logo.png" alt="Logo" class="sidebar-logo">
+                <h2>MVRMS</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
+                <a href="/client/pages/client/browse-vehicles.html" class="nav-item active">Browse Vehicles</a>
+                <a href="/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
+                <a href="/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
+                <a href="/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
+                <a href="/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
+                <a href="/client/pages/client/profile.html" class="nav-item">Profile</a>
+                <a href="/client/pages/client/verifyid.html" class="nav-item">Verify ID</a>
+                <a href="/client/pages/login.html" class="nav-item logout">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-bar">
+                    <input type="text" id="searchVehicles" placeholder="Search vehicles...">
+                </div>
+                <div class="user-menu">
+                    <button class="notification-btn">🔔</button>
+                    <button class="settings-btn">⚙️</button>
+                    <div class="user-profile">
+                        <div class="user-avatar">👤</div>
+                        <div class="user-info">
+                            <span id="currentUsername">Client</span>
+                            <span class="user-role">Client</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <h1>Browse Vehicles</h1>
+
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label for="typeFilter">Type:</label>
+                        <select id="typeFilter">
+                            <option value="">All Types</option>
+                            <option value="motorcycle">Motor</option>
+                            <option value="scooter">Vehicle</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="priceFilter">Max Price:</label>
+                        <select id="priceFilter">
+                            <option value="">All Prices</option>
+                            <option value="500">₱0 - ₱500</option>
+                            <option value="1000">₱500 - ₱1,000</option>
+                            <option value="2000">₱1,000 - ₱2,000</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="availabilityFilter">Availability:</label>
+                        <select id="availabilityFilter">
+                            <option value="">All</option>
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="vehicles-grid" id="vehiclesGrid">
+                    <!-- Vehicles will be populated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/backend.js"></script>
+    <script>
+        function checkAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser || currentUser.role !== 'client') {
+                window.location.href = '../../pages/login.html?role=client';
+            }
+            document.getElementById('currentUsername').textContent = currentUser.username;
+        }
+
+        function loadVehicles() {
+            const vehicles = getVehicles();
+            displayVehicles(vehicles);
+        }
+
+        function displayVehicles(vehicles) {
+            const grid = document.getElementById('vehiclesGrid');
+            grid.innerHTML = vehicles.map(v => `
+                <div class="vehicle-card">
+                    <div class="vehicle-image">🏍️</div>
+                    <h3>${v.name}</h3>
+                    <p class="vehicle-type">${v.type}</p>
+                    <p class="vehicle-price">₱${v.dailyRate}/day</p>
+                    <p class="vehicle-status ${v.available ? 'available' : 'unavailable'}">
+                        ${v.available ? 'Available' : 'Unavailable'}
+                    </p>
+                    <button onclick="makeReservation('${v.id}')" class="btn-reserve" ${!v.available ? 'disabled' : ''}>
+                        Reserve Now
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function makeReservation(vehicleId) {
+            localStorage.setItem('selectedVehicle', vehicleId);
+            window.location.href = 'make-reservation.html';
+        }
+
+        checkAuth();
+        loadVehicles();
+    </script>
+</body>
+</html>

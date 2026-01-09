@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MVRMS</title>
+    <link rel="stylesheet" href="/client/css/client.css">
+    <link rel="icon" type="image/png" href="/client/images/logo.png">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="/client/index.html">
+                        <img src="/client/images/logo.png" alt="Rento Logo" class="logo">
+                        <h1>MVRMS</h1>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <a href="/client/index.html#about" class="nav-link">About Us</a>
+                    <a href="/client/pages/signup.html" class="nav-link">Sign Up</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="auth-page">
+        <div class="auth-container">
+            <div class="auth-left">
+                <img src="/client/images/logo.png" alt="Rento Logo" class="auth-logo">
+                <h2>Login Form</h2>
+                <p>Motor Vehicle Rental Services</p>
+            </div>
+
+            <div class="auth-right">
+                <div class="form-box">
+                    <h3>MVRMS</h3>
+                    <p>Management System</p>
+
+                    <form id="loginForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="role">Select Role</label>
+                            <select id="role" name="role" required>
+                                <option value="">-- Select your role --</option>
+                                <option value="client">Client</option>
+                                <option value="staff">Staff</option>
+                                <option value="admin">Admin</option>
+                                <option value="driver">Driver</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-login">Login</button>
+                    </form>
+
+                    <p class="auth-link">Don't have an account? <a href="/client/pages/signup.html">Sign Up</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Motor Vehicle Rental Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/client/js/backend.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const role = document.getElementById('role').value;
+
+            if (!role) {
+                alert('Please select a role');
+                return;
+            }
+
+            const user = {
+                username: username,
+                role: role,
+                loginTime: new Date().toISOString()
+            };
+
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            
+            const dashboardMap = {
+                'client': '../pages/client/dashboard.html',
+                'staff': '/staff/staff.html',
+                'admin': '/admin/admin.html',
+                'driver': '/driver/driver.html'
+            };
+
+            window.location.href = dashboardMap[role];
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const roleParam = urlParams.get('role');
+        if (roleParam) {
+            document.getElementById('role').value = roleParam;
+        }
+    </script>
+</body>
+</html>

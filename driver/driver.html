@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVRS Driver - Motor Vehicle Rental Management System</title>
+    <link rel="stylesheet" href="/clientcss/driver.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">DRIVER</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/driver/driver.html" class="menu-item active">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/driver/pages/assigned-bookings.html" class="menu-item">
+                    <span class="icon">📋</span>
+                    <span>Assigned Bookings</span>
+                </a>
+                <a href="/driver/pages/check-in-out.html" class="menu-item">
+                    <span class="icon">✓</span>
+                    <span>Check In/Out</span>
+                </a>
+                <a href="/driver/pages/update-profile.html" class="menu-item">
+                    <span class="icon">👤</span>
+                    <span>Update Profile</span>
+                </a>
+                <a href="/driver/pages/report-issue.html" class="menu-item">
+                    <span class="icon">⚠️</span>
+                    <span>Report Issue</span>
+                </a>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Driver Dashboard</h1>
+                <!-- Added notification bell, settings, and profile menu to top bar -->
+                <div class="top-bar-actions">
+                    <!-- Notification Bell -->
+                    <div class="notification-container">
+                        <button class="notification-btn" id="notificationBell" title="Notifications">
+                            🔔
+                            <span class="notification-badge" id="notificationBadge">1</span>
+                        </button>
+                        <div class="notification-panel" id="notificationPanel">
+                            <div class="notification-header">
+                                <h3>Notifications</h3>
+                                <button class="close-btn" onclick="closeNotifications()">×</button>
+                            </div>
+                            <div class="notification-list" id="notificationList">
+                                <div class="notification-item">
+                                    <div class="notification-content">
+                                        <p class="notification-title">New Assignment</p>
+                                        <p class="notification-message">You have been assigned a new booking</p>
+                                        <span class="notification-time">30 min ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification-footer">
+                                <button class="view-all-btn" onclick="viewAllNotifications()">View All</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div class="settings-container">
+                        <button class="settings-btn" id="settingsBtn" title="Settings">⚙️</button>
+                        <div class="settings-panel" id="settingsPanel">
+                            <div class="settings-header">
+                                <h3>Settings</h3>
+                                <button class="close-btn" onclick="closeSettings()">×</button>
+                            </div>
+                            <div class="settings-content">
+                                <div class="setting-item">
+                                    <label>
+                                        <input type="checkbox" id="emailNotifications" checked> Email Notifications
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <label>
+                                        <input type="checkbox" id="darkMode"> Dark Mode
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <label>
+                                        <input type="checkbox" id="soundAlerts" checked> Sound Alerts
+                                    </label>
+                                </div>
+                                <div class="setting-divider"></div>
+                                <div class="setting-item">
+                                    <a href="#" onclick="openAccountSettings(event)">Account Settings</a>
+                                </div>
+                                <div class="setting-item">
+                                    <a href="#" onclick="openPrivacy(event)">Privacy & Security</a>
+                                </div>
+                                <div class="setting-item">
+                                    <a href="#" onclick="openHelp(event)">Help & Support</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Profile -->
+                    <div class="user-profile-container">
+                        <button class="user-profile-btn" id="profileBtn">
+                            <div class="profile-avatar">👤</div>
+                            <span class="username" id="driverName">Driver</span>
+                        </button>
+                        <div class="profile-panel" id="profilePanel">
+                            <div class="profile-header">
+                                <div class="profile-avatar-large">👤</div>
+                                <div class="profile-info">
+                                    <h4>Driver User</h4>
+                                    <p id="profileUsername">driver-user</p>
+                                    <p class="profile-role">Driver</p>
+                                </div>
+                            </div>
+                            <div class="profile-divider"></div>
+                            <div class="profile-menu">
+                                <a href="/driver/pages/update-profile.html">View Profile</a>
+                                <a href="/driver/pages/update-profile.html">Edit Profile</a>
+                                <a href="#" onclick="changePassword(event)">Change Password</a>
+                            </div>
+                            <div class="profile-divider"></div>
+                            <div class="logout-section">
+                                <button class="logout-link" onclick="logout()">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Assigned Today</h3>
+                            <span class="trend positive">↑ Active</span>
+                        </div>
+                        <div class="kpi-value" id="assignedToday">0</div>
+                        <p class="kpi-label">Bookings Assigned</p>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Current Vehicle</h3>
+                            <span class="trend neutral">📍</span>
+                        </div>
+                        <div class="kpi-value" id="currentVehicle">-</div>
+                        <p class="kpi-label">In Use</p>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Pending Check-Ins</h3>
+                            <span class="trend warning">⏱️</span>
+                        </div>
+                        <div class="kpi-value" id="pendingCheckIns">0</div>
+                        <p class="kpi-label">Waiting for Check-In</p>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Completion Rate</h3>
+                            <span class="trend positive">↑ 98%</span>
+                        </div>
+                        <div class="kpi-value">98%</div>
+                        <p class="kpi-label">This Month</p>
+                    </div>
+                </div>
+
+                <!-- Active Booking Section -->
+                <section class="section">
+                    <h2>Active Booking</h2>
+                    <div id="activeBooking" class="active-booking-container">
+                        <p class="empty-state">No active bookings at the moment</p>
+                    </div>
+                </section>
+
+                <!-- Today's Tasks -->
+                <section class="section">
+                    <h2>Today's Tasks</h2>
+                    <div class="tasks-container">
+                        <div class="task-item">
+                            <input type="checkbox" id="task1" class="task-checkbox">
+                            <label for="task1">Complete morning vehicle inspection</label>
+                        </div>
+                        <div class="task-item">
+                            <input type="checkbox" id="task2" class="task-checkbox">
+                            <label for="task2">Check fuel levels on all assigned vehicles</label>
+                        </div>
+                        <div class="task-item">
+                            <input type="checkbox" id="task3" class="task-checkbox">
+                            <label for="task3">Update vehicle maintenance records</label>
+                        </div>
+                        <div class="task-item">
+                            <input type="checkbox" id="task4" class="task-checkbox">
+                            <label for="task4">Review customer feedback</label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recent Activity -->
+                <section class="section">
+                    <h2>Recent Activity</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">✓</div>
+                            <div class="activity-details">
+                                <p class="activity-title">Successfully checked in Vehicle VEH001</p>
+                                <p class="activity-time">Today at 09:30 AM</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">📋</div>
+                            <div class="activity-details">
+                                <p class="activity-title">New booking assigned - Customer John Doe</p>
+                                <p class="activity-time">Today at 08:15 AM</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">⚠️</div>
+                            <div class="activity-details">
+                                <p class="activity-title">Issue reported on Vehicle VEH003</p>
+                                <p class="activity-time">Yesterday at 02:45 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/driver/js/backend.js"></script>
+    <script src="/driver/js/app.js"></script>
+</body>
+</html>

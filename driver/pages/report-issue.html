@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Issue - MVRS Driver</title>
+    <link rel="stylesheet" href="/driver/css/driver.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">DRIVER</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/driver/driver.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/driver/pages/assigned-bookings.html" class="menu-item">
+                    <span class="icon">📋</span>
+                    <span>Assigned Bookings</span>
+                </a>
+                <a href="/driver/pages/check-in-out.html" class="menu-item">
+                    <span class="icon">✓</span>
+                    <span>Check In/Out</span>
+                </a>
+                <a href="/driver/pages/update-profile.html" class="menu-item">
+                    <span class="icon">👤</span>
+                    <span>Update Profile</span>
+                </a>
+                <a href="/driver/pages/report-issue.html" class="menu-item active">
+                    <span class="icon">⚠️</span>
+                    <span>Report Issue</span>
+                </a>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Report Issue</h1>
+                <div class="user-info">
+                    <span class="username" id="driverName">driver-user</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h2>Report Vehicle Issue</h2>
+                </div>
+
+                <!-- Report Issue Form -->
+                <section class="form-container">
+                    <form id="reportForm">
+                        <div class="form-group">
+                            <label for="bookingId">Select Booking:</label>
+                            <select id="bookingId" required>
+                                <option value="">-- Select Booking --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vehicleId">Vehicle:</label>
+                            <input type="text" id="vehicleId" readonly placeholder="Vehicle will auto-populate">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="issueSeverity">Issue Severity:</label>
+                            <select id="issueSeverity" required>
+                                <option value="">-- Select Severity --</option>
+                                <option value="critical">Critical (Safety Risk)</option>
+                                <option value="high">High (Major Problem)</option>
+                                <option value="medium">Medium (Moderate Issue)</option>
+                                <option value="low">Low (Minor Issue)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="issueCategory">Issue Category:</label>
+                            <select id="issueCategory" required>
+                                <option value="">-- Select Category --</option>
+                                <option value="mechanical">Mechanical</option>
+                                <option value="electrical">Electrical</option>
+                                <option value="body-damage">Body Damage</option>
+                                <option value="interior">Interior Damage</option>
+                                <option value="tires">Tire Issues</option>
+                                <option value="brakes">Brake Issues</option>
+                                <option value="engine">Engine Problems</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="issueDescription">Issue Description:</label>
+                            <textarea id="issueDescription" placeholder="Describe the issue in detail" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Location:</label>
+                            <input type="text" id="location" placeholder="Where did you notice the issue?" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reportImages">Attach Images (Optional):</label>
+                            <input type="file" id="reportImages" accept="image/*" multiple>
+                            <small>You can upload up to 5 images</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="immediateAction">Immediate Action Taken:</label>
+                            <textarea id="immediateAction" placeholder="What action did you take immediately?" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit Report</button>
+                    </form>
+                </section>
+
+                <!-- Previous Reports -->
+                <section class="section">
+                    <h2>My Previous Reports</h2>
+                    <div class="reports-list" id="reportsList"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/driver/js/backend.js"></script>
+    <script src="/driver/js/report-issue.js"></script>
+</body>
+</html>

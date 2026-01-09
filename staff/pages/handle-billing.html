@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handle Billing - MVRS Staff</title>
+    <link rel="stylesheet" href="/staff/css/staff.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">STAFF</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/staff/staff.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/staff/pages/process-booking.html" class="menu-item">
+                    <span class="icon">📝</span>
+                    <span>Process Booking</span>
+                </a>
+                <a href="/staff/pages/vehicle-availability.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Vehicle Availability</span>
+                </a>
+                <a href="/staff/pages/verify-clients.html" class="menu-item">
+                    <span class="icon">✓</span>
+                    <span>Verify Clients</span>
+                </a>
+                <a href="/staff/pages/asset-management.html" class="menu-item">
+                    <span class="icon">📦</span>
+                    <span>Asset Management</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">BILLING</p>
+                    <a href="/staff/pages/handle-billing.html" class="menu-item active">
+                        <span class="icon">💰</span>
+                        <span>Handle Billing</span>
+                    </a>
+                    <a href="/staff/pages/payment-methods.html" class="menu-item">
+                        <span class="icon">💳</span>
+                        <span>Payment Methods</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Handle Billing</h1>
+                <div class="user-info">
+                    <span class="username">staff-user</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Billing Summary -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Total Receivable</h3>
+                        </div>
+                        <div class="kpi-value" id="totalReceivable">₱0</div>
+                        <p class="kpi-label">Outstanding</p>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Today's Collections</h3>
+                        </div>
+                        <div class="kpi-value" id="todayCollections">₱0</div>
+                        <p class="kpi-label">Received</p>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Month Revenue</h3>
+                        </div>
+                        <div class="kpi-value" id="monthRevenue">₱0</div>
+                        <p class="kpi-label">This Month</p>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Pending Payments</h3>
+                        </div>
+                        <div class="kpi-value" id="pendingCount">0</div>
+                        <p class="kpi-label">Invoices</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Billing Records</h2>
+                        <button class="btn btn-primary" onclick="showNewInvoiceModal()">+ New Invoice</button>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchInvoice" placeholder="Search invoices..." class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterPaymentStatus" class="filter-select">
+                                <option value="">All</option>
+                                <option value="pending">Pending</option>
+                                <option value="paid">Paid</option>
+                                <option value="overdue">Overdue</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Invoice ID</th>
+                                <th>Client</th>
+                                <th>Amount</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Payment Method</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoicesTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 20px;">Loading invoices...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Invoice Modal -->
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Invoice</h2>
+                <button class="close-btn" onclick="closeNewInvoiceModal()">×</button>
+            </div>
+            <form id="invoiceForm">
+                <div class="form-group">
+                    <label for="invoiceClient">Client *</label>
+                    <select id="invoiceClient" required>
+                        <option value="">Select client...</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="invoiceAmount">Amount (₱) *</label>
+                        <input type="number" id="invoiceAmount" required placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="invoiceDate">Invoice Date *</label>
+                        <input type="date" id="invoiceDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="dueDate">Due Date *</label>
+                    <input type="date" id="dueDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="invoiceDescription">Description *</label>
+                    <textarea id="invoiceDescription" required placeholder="Invoice details..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeNewInvoiceModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Processing Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Process Payment</h2>
+                <button class="close-btn" onclick="closePaymentModal()">×</button>
+            </div>
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="paymentInvoice">Invoice ID</label>
+                    <input type="text" id="paymentInvoice" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentAmount">Amount (₱) *</label>
+                    <input type="number" id="paymentAmount" required placeholder="0.00" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentDate">Payment Date *</label>
+                    <input type="date" id="paymentDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method *</label>
+                    <select id="paymentMethod" required>
+                        <option value="">Select method...</option>
+                        <option value="cash">Cash</option>
+                        <option value="gcash">GCash</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="credit_card">Credit Card</option>
+                        <option value="check">Check</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentReference">Reference Number</label>
+                    <input type="text" id="paymentReference" placeholder="Reference or transaction ID">
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentNotes">Notes</label>
+                    <textarea id="paymentNotes" placeholder="Add payment notes..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closePaymentModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Process Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System - Staff Interface.</p>
+    </footer>
+
+    <script src="/staff/js/backend.js"></script>
+    <script src="/staff/js/shared-script.js"></script>
+    <script src="/staff/js/handle-billing.js"></script>
+</body>
+</html>

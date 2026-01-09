@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Report - MVRS Admin</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">ADMIN</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/admin/admin.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/pages/manage-vehicles.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Manage Vehicles</span>
+                </a>
+                <a href="/admin/pages/manage-users.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    <span>Manage Users</span>
+                </a>
+                <a href="/admin/pages/pricing-billing.html" class="menu-item">
+                    <span class="icon">💰</span>
+                    <span>Pricing & Billing</span>
+                </a>
+                <a href="/admin/pages/oversee-reservations.html" class="menu-item">
+                    <span class="icon">📅</span>
+                    <span>Oversee Reservations</span>
+                </a>
+                <a href="/admin/pages/vehicle-histories.html" class="menu-item">
+                    <span class="icon">📄</span>
+                    <span>Vehicle Histories</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">REPORTS</p>
+                    <a href="/admin/pages/generate-reports.html" class="menu-item">
+                        <span class="icon">📈</span>
+                        <span>Generate Reports</span>
+                    </a>
+                    <a href="/admin/pages/vehicle-report.html" class="menu-item active">
+                        <span class="icon">🚗</span>
+                        <span>Vehicle Report</span>
+                    </a>
+                    <a href="/admin/pages/revenue-report.html" class="menu-item">
+                        <span class="icon">💵</span>
+                        <span>Revenue Report</span>
+                    </a>
+                    <a href="/admin/pages/booking-report.html" class="menu-item">
+                        <span class="icon">📋</span>
+                        <span>Booking Report</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Vehicle Report</h1>
+                <div class="user-info">
+                    <span class="username">uep-mainadmin</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2>Fleet Statistics</h2>
+                    <button class="btn btn-secondary" onclick="downloadReportPDF()">📥 Download PDF</button>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="kpi-grid" style="margin-bottom: 30px;">
+                    <div class="kpi-card">
+                        <h3>Total Vehicles</h3>
+                        <div class="kpi-value" id="reportTotalVehicles">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Available</h3>
+                        <div class="kpi-value" id="reportAvailable">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Rented</h3>
+                        <div class="kpi-value" id="reportRented">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Avg Mileage</h3>
+                        <div class="kpi-value" id="reportAvgMileage">0</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Vehicle Status Distribution</h3>
+                        <canvas id="vehicleStatusChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Vehicle Type Distribution</h3>
+                        <canvas id="vehicleTypeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Detailed Table -->
+                <div style="margin-top: 40px;">
+                    <h2>Vehicle Details</h2>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>License Plate</th>
+                                <th>Model</th>
+                                <th>Type</th>
+                                <th>Year</th>
+                                <th>Mileage</th>
+                                <th>Status</th>
+                                <th>Daily Rate</th>
+                                <th>Total Rentals</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vehicleReportTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 20px;">Loading vehicle data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="/admin/js/backend.js"></script>
+    <script src="/admin/js/shared-script.js"></script>
+    <script src="/admin/js/reports.js"></script>
+</body>
+</html>

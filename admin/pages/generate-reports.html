@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Reports - MVRS Admin</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">ADMIN</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/admin/admin.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/pages/manage-vehicles.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Manage Vehicles</span>
+                </a>
+                <a href="/admin/pages/manage-users.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    <span>Manage Users</span>
+                </a>
+                <a href="/admin/pages/pricing-billing.html" class="menu-item">
+                    <span class="icon">💰</span>
+                    <span>Pricing & Billing</span>
+                </a>
+                <a href="/admin/pages/oversee-reservations.html" class="menu-item">
+                    <span class="icon">📅</span>
+                    <span>Oversee Reservations</span>
+                </a>
+                <a href="/admin/pages/vehicle-histories.html" class="menu-item">
+                    <span class="icon">📄</span>
+                    <span>Vehicle Histories</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">REPORTS</p>
+                    <a href="/admin/pages/generate-reports.html" class="menu-item active">
+                        <span class="icon">📈</span>
+                        <span>Generate Reports</span>
+                    </a>
+                    <a href="/admin/pages/vehicle-report.html" class="menu-item">
+                        <span class="icon">🚗</span>
+                        <span>Vehicle Report</span>
+                    </a>
+                    <a href="/admin/pages/revenue-report.html" class="menu-item">
+                        <span class="icon">💵</span>
+                        <span>Revenue Report</span>
+                    </a>
+                    <a href="/admin/pages/booking-report.html" class="menu-item">
+                        <span class="icon">📋</span>
+                        <span>Booking Report</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Generate Reports</h1>
+                <div class="user-info">
+                    <span class="username">uep-mainadmin</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="report-grid">
+                    <div class="report-card" onclick="window.location.href='/admin/pages/vehicle-report.html'">
+                        <div class="report-icon">🚗</div>
+                        <h3>Vehicle Report</h3>
+                        <p>Generate vehicle statistics and fleet analytics</p>
+                        <button class="btn btn-primary">View Report</button>
+                    </div>
+
+                    <div class="report-card" onclick="window.location.href='/admin/pages/revenue-report.html'">
+                        <div class="report-icon">💵</div>
+                        <h3>Revenue Report</h3>
+                        <p>Financial summary and revenue analytics</p>
+                        <button class="btn btn-primary">View Report</button>
+                    </div>
+
+                    <div class="report-card" onclick="window.location.href='/admin/pages/booking-report.html'">
+                        <div class="report-icon">📋</div>
+                        <h3>Booking Report</h3>
+                        <p>Booking statistics and reservation analytics</p>
+                        <button class="btn btn-primary">View Report</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="/admin/js/backend.js"></script>
+    <script src="/admin/js/shared-script.js"></script>
+</body>
+</html>

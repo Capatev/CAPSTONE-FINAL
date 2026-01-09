@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motor Vehicle Rental Management System</title>
+    <link rel="stylesheet" href="/client/css/client.css">
+    <link rel="icon" type="image/png" href="/client/images/logo.png">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="/client/images/logo.png" alt="Rento Logo" class="logo">
+                    <h1>MVRMS</h1>
+                </div>
+                <nav class="nav">
+                    <a href="#about" class="nav-link">About Us</a>
+                    <a href="/client/pages/login.html" class="nav-link">Login</a>
+                    <a href="/client/pages/signup.html" class="nav-link btn-primary">Sign Up</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h2>Welcome to MVRMS</h2>
+                <p>Motor Vehicle Rental Management System</p>
+                <p class="subtitle">Choose your role to get started</p>
+            </div>
+        </section>
+
+        <section class="role-selection">
+            <div class="container">
+                <div class="roles-grid">
+                    <div class="role-card">
+                        <div class="role-icon">🚗</div>
+                        <h3>Client</h3>
+                        <p>Browse vehicles, make reservations, and manage your rentals</p>
+                        <a href="/client/pages/login.html?role=client" class="btn-role">Login as Client</a>
+                    </div>
+
+                    <div class="role-card">
+                        <div class="role-icon">👔</div>
+                        <h3>Staff</h3>
+                        <p>Process bookings, manage vehicle availability, and verify clients</p>
+                        <a href="pages/login.html?role=staff" class="btn-role">Login as Staff</a>
+                    </div>
+
+                    <div class="role-card">
+                        <div class="role-icon">⚙️</div>
+                        <h3>Admin</h3>
+                        <p>Manage system, analytics, users, and overall fleet operations</p>
+                        <a href="pages/login.html?role=admin" class="btn-role">Login as Admin</a>
+                    </div>
+
+                    <div class="role-card">
+                        <div class="role-icon">🚙</div>
+                        <h3>Driver</h3>
+                        <p>View assigned bookings, check-in/out vehicles, and report issues</p>
+                        <a href="pages/login.html?role=driver" class="btn-role">Login as Driver</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="about">
+            <div class="container">
+                <h2>Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h4>Easy Booking</h4>
+                        <p>Quick and simple vehicle reservation process</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Multiple Payments</h4>
+                        <p>Support for GCash, Bank Transfer, Cash, and Credit Cards</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Real-time Tracking</h4>
+                        <p>Track vehicle availability and booking status instantly</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Secure Verification</h4>
+                        <p>ID verification and client management for security</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Motor Vehicle Rental Management System. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

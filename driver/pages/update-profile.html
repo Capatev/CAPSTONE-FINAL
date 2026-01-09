@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile - MVRS Driver</title>
+    <link rel="stylesheet" href="/driver/css/driver.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">DRIVER</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/driver/driver.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/driver/pages/assigned-bookings.html" class="menu-item">
+                    <span class="icon">📋</span>
+                    <span>Assigned Bookings</span>
+                </a>
+                <a href="/driver/pages/check-in-out.html" class="menu-item">
+                    <span class="icon">✓</span>
+                    <span>Check In/Out</span>
+                </a>
+                <a href="/driver/pages/update-profile.html" class="menu-item active">
+                    <span class="icon">👤</span>
+                    <span>Update Profile</span>
+                </a>
+                <a href="/driver/pages/report-issue.html" class="menu-item">
+                    <span class="icon">⚠️</span>
+                    <span>Report Issue</span>
+                </a>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Update Profile</h1>
+                <div class="user-info">
+                    <span class="username" id="driverName">driver-user</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h2>Profile Information</h2>
+                </div>
+
+                <div class="profile-container">
+                    <!-- Profile Picture Section -->
+                    <section class="profile-section">
+                        <h3>Profile Picture</h3>
+                        <div class="profile-picture-container">
+                            <div class="profile-avatar-large">👤</div>
+                            <button class="btn btn-secondary" id="uploadPhotoBtn">Upload Photo</button>
+                            <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                        </div>
+                    </section>
+
+                    <!-- Personal Information -->
+                    <section class="profile-section">
+                        <h3>Personal Information</h3>
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label for="fullName">Full Name:</label>
+                                <input type="text" id="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number:</label>
+                                <input type="tel" id="phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address:</label>
+                                <textarea id="address" rows="3" required></textarea>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- License Information -->
+                    <section class="profile-section">
+                        <h3>Driver's License</h3>
+                        <div class="form-group">
+                            <label for="licenseNumber">License Number:</label>
+                            <input type="text" id="licenseNumber" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="licenseExpiry">Expiry Date:</label>
+                            <input type="date" id="licenseExpiry" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="licenseType">License Type:</label>
+                            <input type="text" id="licenseType" required>
+                        </div>
+                    </section>
+
+                    <!-- Emergency Contact -->
+                    <section class="profile-section">
+                        <h3>Emergency Contact</h3>
+                        <div class="form-group">
+                            <label for="emergencyName">Contact Name:</label>
+                            <input type="text" id="emergencyName" placeholder="Enter emergency contact name">
+                        </div>
+                        <div class="form-group">
+                            <label for="emergencyPhone">Contact Phone:</label>
+                            <input type="tel" id="emergencyPhone" placeholder="Enter emergency contact phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="emergencyRelation">Relationship:</label>
+                            <input type="text" id="emergencyRelation" placeholder="Enter relationship">
+                        </div>
+                    </section>
+
+                    <!-- Change Password -->
+                    <section class="profile-section">
+                        <h3>Change Password</h3>
+                        <form id="passwordForm">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password:</label>
+                                <input type="password" id="currentPassword" placeholder="Enter current password">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password:</label>
+                                <input type="password" id="newPassword" placeholder="Enter new password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password:</label>
+                                <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Change Password</button>
+                        </form>
+                    </section>
+
+                    <!-- Save Changes -->
+                    <div class="button-group">
+                        <button type="submit" form="profileForm" class="btn btn-primary">Save Changes</button>
+                        <button type="reset" form="profileForm" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/driver/js/backend.js"></script>
+    <script src="/driver/js/update-profile.js"></script>
+</body>
+</html>

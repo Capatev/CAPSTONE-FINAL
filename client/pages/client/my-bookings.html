@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Client | MVRMS</title>
+    <link rel="stylesheet" href="/client/css/client.css">
+    <link rel="icon" type="image/png" href="/client/images/logo.png">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/client/images/logo.png" alt="Logo" class="sidebar-logo">
+                <h2>MVRMS</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
+                <a href="/client/pages/client/browse-vehicles.html" class="nav-item">Browse Vehicles</a>
+                <a href="/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
+                <a href="/client/pages/client/my-bookings.html" class="nav-item active">My Bookings</a>
+                <a href="/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
+                <a href="/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
+                <a href="/client/pages/client/profile.html" class="nav-item">Profile</a>
+                <a href="/client/pages/client/verifyid.html" class="nav-item">Verify ID</a>
+                <a href="/client/pages/login.html" class="nav-item logout">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-bar">
+                    <input type="text" id="searchBookings" placeholder="Search bookings...">
+                </div>
+                <div class="user-menu">
+                    <button class="notification-btn">🔔</button>
+                    <button class="settings-btn">⚙️</button>
+                    <div class="user-profile">
+                        <div class="user-avatar">👤</div>
+                        <div class="user-info">
+                            <span id="currentUsername">Client</span>
+                            <span class="user-role">Client</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <h1>My Bookings</h1>
+
+                <div class="filter-section">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="Active">Active</button>
+                    <button class="filter-btn" data-filter="Completed">Completed</button>
+                    <button class="filter-btn" data-filter="Cancelled">Cancelled</button>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Vehicle</th>
+                            <th>Pickup Date</th>
+                            <th>Return Date</th>
+                            <th>Total Cost</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTable">
+                        <!-- Bookings will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="/client/js/backend.js"></script>
+    <script>
+        function checkAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser || currentUser.role !== 'client') {
+                window.location.href = '../../pages/login.html?role=client';
+            }
+            document.getElementById('currentUsername').textContent = currentUser.username;
+        }
+
+        function loadBookings(filter = 'all') {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            const clientBookings = bookings.filter(b => b.clientUsername === currentUser.username);
+
+            const filtered = filter === 'all' ? clientBookings : clientBookings.filter(b => b.status === filter);
+
+            const tbody = document.getElementById('bookingsTable');
+            tbody.innerHTML = filtered.map(b => `
+                <tr>
+                    <td>${b.id}</td>
+                    <td>${b.vehicleName}</td>
+                    <td>${b.pickupDate}</td>
+                    <td>${b.returnDate}</td>
+                    <td>₱${b.totalCost.toLocaleString()}</td>
+                    <td><span class="badge ${b.status.toLowerCase()}">${b.status}</span></td>
+                    <td><a href="handle-payment.html" class="link">Pay Now</a></td>
+                </tr>
+            `).join('');
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                loadBookings(this.getAttribute('data-filter'));
+            });
+        });
+
+        checkAuth();
+        loadBookings();
+    </script>
+</body>
+</html>

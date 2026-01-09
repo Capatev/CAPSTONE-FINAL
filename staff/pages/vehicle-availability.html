@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Availability - MVRS Staff</title>
+    <link rel="stylesheet" href="/staff/css/staff.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">STAFF</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/staff/staff.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/staff/pages/process-booking.html" class="menu-item">
+                    <span class="icon">📝</span>
+                    <span>Process Booking</span>
+                </a>
+                <a href="/staff/pages/vehicle-availability.html" class="menu-item active">
+                    <span class="icon">🚙</span>
+                    <span>Vehicle Availability</span>
+                </a>
+                <a href="/staff/pages/verify-clients.html" class="menu-item">
+                    <span class="icon">✓</span>
+                    <span>Verify Clients</span>
+                </a>
+                <a href="/staff/pages/asset-management.html" class="menu-item">
+                    <span class="icon">📦</span>
+                    <span>Asset Management</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">BILLING</p>
+                    <a href="/staff/pages/handle-billing.html" class="menu-item">
+                        <span class="icon">💰</span>
+                        <span>Handle Billing</span>
+                    </a>
+                    <a href="/staff/pages/payment-methods.html" class="menu-item">
+                        <span class="icon">💳</span>
+                        <span>Payment Methods</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Vehicle Availability</h1>
+                <div class="user-info">
+                    <span class="username">staff-user</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Fleet Status Management</h2>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchVehicles" placeholder="Search vehicles..." class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterStatus" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="available">Available</option>
+                                <option value="rented">Rented</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="damaged">Damaged</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Plate No.</th>
+                                <th>Model</th>
+                                <th>Type</th>
+                                <th>Current Status</th>
+                                <th>Mileage</th>
+                                <th>Daily Rate</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vehiclesTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 20px;">Loading vehicles...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Update Vehicle Status Modal -->
+    <div id="updateVehicleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Update Vehicle Status</h2>
+                <button class="close-btn" onclick="closeUpdateVehicleModal()">×</button>
+            </div>
+            <form id="updateVehicleForm">
+                <div class="form-group">
+                    <label for="vehiclePlate">Vehicle Plate</label>
+                    <input type="text" id="vehiclePlate" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label for="newStatus">New Status *</label>
+                    <select id="newStatus" required>
+                        <option value="">Select status...</option>
+                        <option value="available">Available</option>
+                        <option value="rented">Rented</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="damaged">Damaged</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="mileageUpdate">Current Mileage</label>
+                    <input type="number" id="mileageUpdate" placeholder="Enter current mileage">
+                </div>
+
+                <div class="form-group">
+                    <label for="statusNotes">Notes</label>
+                    <textarea id="statusNotes" placeholder="Add any notes about the vehicle condition..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeUpdateVehicleModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System - Staff Interface.</p>
+    </footer>
+
+    <script src="/staff/js/backend.js"></script>
+    <script src="/staff/js/shared-script.js"></script>
+    <script src="/staff/js/vehicle-availability.js"></script>
+</body>
+</html>

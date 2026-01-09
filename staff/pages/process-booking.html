@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Booking - MVRS Staff</title>
+    <link rel="stylesheet" href="/staff/css/staff.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">STAFF</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/staff/staff.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/staff/pages/process-booking.html" class="menu-item active">
+                    <span class="icon">📝</span>
+                    <span>Process Booking</span>
+                </a>
+                <a href="/staff/pages/vehicle-availability.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Vehicle Availability</span>
+                </a>
+                <a href="/staff/pages/verify-clients.html" class="menu-item">
+                    <span class="icon">✓</span>
+                    <span>Verify Clients</span>
+                </a>    
+                <a href="/staff/pages/asset-management.html" class="menu-item">
+                    <span class="icon">📦</span>
+                    <span>Asset Management</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">BILLING</p>
+                    <a href="/staff/pages/handle-billing.html" class="menu-item">
+                        <span class="icon">💰</span>
+                        <span>Handle Billing</span>
+                    </a>
+                    <a href="/staff/pages/payment-methods.html" class="menu-item">
+                        <span class="icon">💳</span>
+                        <span>Payment Methods</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Process Booking</h1>
+                <div class="user-info">
+                    <span class="username">staff-user</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>New Booking Request</h2>
+                        <button class="btn btn-primary" onclick="showNewBookingModal()">+ Create Booking</button>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchBooking" placeholder="Search bookings..." class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterStatus" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="active">Active</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Client Name</th>
+                                <th>Vehicle</th>
+                                <th>Dates</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingsTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 20px;">Loading bookings...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Booking</h2>
+                <button class="close-btn" onclick="closeBookingModal()">×</button>
+            </div>
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label for="clientName">Client Name *</label>
+                    <input type="text" id="clientName" required placeholder="Enter client name">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="clientEmail">Email *</label>
+                        <input type="email" id="clientEmail" required placeholder="client@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientPhone">Phone *</label>
+                        <input type="tel" id="clientPhone" required placeholder="09123456789">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="vehicleSelect">Select Vehicle *</label>
+                    <select id="vehicleSelect" required>
+                        <option value="">Choose a vehicle...</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pickupDate">Pickup Date *</label>
+                        <input type="date" id="pickupDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="returnDate">Return Date *</label>
+                        <input type="date" id="returnDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="rentalDays">Rental Days</label>
+                    <input type="number" id="rentalDays" disabled placeholder="Auto-calculated">
+                </div>
+
+                <div class="form-group">
+                    <label for="totalCost">Total Cost</label>
+                    <input type="text" id="totalCost" disabled placeholder="Auto-calculated">
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Special Notes</label>
+                    <textarea id="notes" placeholder="Any special requests or notes..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System - Staff Interface.</p>
+    </footer>
+
+    <script src="/staff/js/backend.js"></script>
+    <script src="/staff/js/shared-script.js"></script>
+    <script src="/staff/js/process-booking.js"></script>
+</body>
+</html>

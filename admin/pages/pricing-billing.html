@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing & Billing - MVRS Admin</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">ADMIN</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/admin/admin.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/pages/manage-vehicles.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Manage Vehicles</span>
+                </a>
+                <a href="/admin/pages/manage-users.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    <span>Manage Users</span>
+                </a>
+                <a href="/admin/pages/pricing-billing.html" class="menu-item active">
+                    <span class="icon">💰</span>
+                    <span>Pricing & Billing</span>
+                </a>
+                <a href="/admin/pages/oversee-reservations.html" class="menu-item">
+                    <span class="icon">📅</span>
+                    <span>Oversee Reservations</span>
+                </a>
+                <a href="/admin/pages/vehicle-histories.html" class="menu-item">
+                    <span class="icon">📄</span>
+                    <span>Vehicle Histories</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">REPORTS</p>
+                    <a href="/admin/pages/generate-reports.html" class="menu-item">
+                        <span class="icon">📈</span>
+                        <span>Generate Reports</span>
+                    </a>
+                    <a href="/admin/pages/vehicle-report.html" class="menu-item">
+                        <span class="icon">🚗</span>
+                        <span>Vehicle Report</span>
+                    </a>
+                    <a href="/admin/pages/revenue-report.html" class="menu-item">
+                        <span class="icon">💵</span>
+                        <span>Revenue Report</span>
+                    </a>
+                    <a href="/admin/pages/booking-report.html" class="menu-item">
+                        <span class="icon">📋</span>
+                        <span>Booking Report</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Pricing & Billing</h1>
+                <div class="user-info">
+                    <span class="username">uep-mainadmin</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Pricing Tiers -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Pricing Tiers</h2>
+                        <button class="btn btn-primary" onclick="openAddPricingModal()">+ Add Tier</button>
+                    </div>
+
+                    <div class="pricing-grid">
+                        <div id="pricingTiersContainer"></div>
+                    </div>
+                </div>
+
+                <!-- Billing History -->
+                <div class="section" style="margin-top: 40px;">
+                    <h2>Billing History</h2>
+                    <div class="header-actions">
+                        <input type="text" id="searchBilling" placeholder="Search billing..." class="search-input">
+                        <select id="filterPaymentStatus" class="filter-select">
+                            <option value="">All Status</option>
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Invoice ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billingTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 20px;">Loading billing data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Pricing Modal -->
+    <div id="pricingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Pricing Tier</h2>
+                <button class="close-btn" onclick="closePricingModal()">&times;</button>
+            </div>
+            <form id="pricingForm" onsubmit="savePricing(event)">
+                <div class="form-group">
+                    <label>Tier Name *</label>
+                    <input type="text" id="tierName" placeholder="e.g., Economy, Premium" required>
+                </div>
+                <div class="form-group">
+                    <label>Daily Rate (₱) *</label>
+                    <input type="number" id="dailyRate" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Weekly Rate (₱) *</label>
+                    <input type="number" id="weeklyRate" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Monthly Rate (₱) *</label>
+                    <input type="number" id="monthlyRate" step="0.01" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closePricingModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Tier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="/admin/js/backend.js"></script>
+    <script src="/admin/js/shared-script.js"></script>
+    <script src="/admin/js/pricing-billing.js"></script>
+</body>
+</html>

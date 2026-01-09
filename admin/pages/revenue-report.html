@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenue Report - MVRS Admin</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">ADMIN</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/admin/admin.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/pages/manage-vehicles.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Manage Vehicles</span>
+                </a>
+                <a href="/admin/pages/manage-users.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    <span>Manage Users</span>
+                </a>
+                <a href="/admin/pages/pricing-billing.html" class="menu-item">
+                    <span class="icon">💰</span>
+                    <span>Pricing & Billing</span>
+                </a>
+                <a href="/admin/pages/oversee-reservations.html" class="menu-item">
+                    <span class="icon">📅</span>
+                    <span>Oversee Reservations</span>
+                </a>
+                <a href="/admin/pages/vehicle-histories.html" class="menu-item">
+                    <span class="icon">📄</span>
+                    <span>Vehicle Histories</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">REPORTS</p>
+                    <a href="/admin/pages/generate-reports.html" class="menu-item">
+                        <span class="icon">📈</span>
+                        <span>Generate Reports</span>
+                    </a>
+                    <a href="/admin/pages/vehicle-report.html" class="menu-item">
+                        <span class="icon">🚗</span>
+                        <span>Vehicle Report</span>
+                    </a>
+                    <a href="/admin/pages/revenue-report.html" class="menu-item active">
+                        <span class="icon">💵</span>
+                        <span>Revenue Report</span>
+                    </a>
+                    <a href="/admin/pages/booking-report.html" class="menu-item">
+                        <span class="icon">📋</span>
+                        <span>Booking Report</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Revenue Report</h1>
+                <div class="user-info">
+                    <span class="username">uep-mainadmin</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2>Financial Summary</h2>
+                    <button class="btn btn-secondary" onclick="downloadReportPDF()">📥 Download PDF</button>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="kpi-grid" style="margin-bottom: 30px;">
+                    <div class="kpi-card">
+                        <h3>Total Revenue</h3>
+                        <div class="kpi-value" id="reportTotalRevenue">₱0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>This Month</h3>
+                        <div class="kpi-value" id="reportMonthRevenue">₱0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Avg Revenue/Day</h3>
+                        <div class="kpi-value" id="reportAvgDailyRevenue">₱0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <h3>Transactions</h3>
+                        <div class="kpi-value" id="reportTransactions">0</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Revenue Trend (30 Days)</h3>
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Revenue by Vehicle Type</h3>
+                        <canvas id="revenueTypeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div style="margin-top: 40px;">
+                    <h2>Revenue by Payment Method</h2>
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <h3>Credit Card</h3>
+                            <div class="kpi-value" id="paymentCard">₱0</div>
+                            <p class="kpi-label">40% of revenue</p>
+                        </div>
+                        <div class="kpi-card">
+                            <h3>Cash</h3>
+                            <div class="kpi-value" id="paymentCash">₱0</div>
+                            <p class="kpi-label">35% of revenue</p>
+                        </div>
+                        <div class="kpi-card">
+                            <h3>Online Transfer</h3>
+                            <div class="kpi-value" id="paymentTransfer">₱0</div>
+                            <p class="kpi-label">25% of revenue</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing Records -->
+                <div style="margin-top: 40px;">
+                    <h2>Recent Transactions</h2>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Invoice ID</th>
+                                <th>Customer</th>
+                                <th>Vehicle</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Method</th>
+                            </tr>
+                        </thead>
+                        <tbody id="revenueTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 20px;">Loading transaction data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="/admin/js/backend.js"></script>
+    <script src="/admin/js/shared-script.js"></script>
+    <script src="/admin/js/reports.js"></script>
+</body>
+</html>

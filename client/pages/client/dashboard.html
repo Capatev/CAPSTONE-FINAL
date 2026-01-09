@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Client | Rento</title>
+    <link rel="stylesheet" href="/client/css/styles.css">
+    <link rel="icon" type="image/png" href="/client/images/logo.png">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/client/images/logo.png" alt="Logo" class="sidebar-logo">
+                <h2>Rento</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/client/pages/client/dashboard.html" class="nav-item active">Dashboard</a>
+                <a href="/client/pages/client/browse-vehicles.html" class="nav-item">Browse Vehicles</a>
+                <a href="/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
+                <a href="/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
+                <a href="/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
+                <a href="/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
+                <a href="/client/pages/client/profile.html" class="nav-item">Profile</a>
+                <a href="/client/pages/login.html" class="nav-item logout">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search...">
+                </div>
+                <!-- Updated user menu with functional notification, settings, and profile components -->
+                <div class="user-menu">
+                    <!-- Notification Bell -->
+                    <div class="notification-container">
+                        <button class="notification-btn" id="notificationBell" title="Notifications">
+                            🔔
+                            <span class="notification-badge" id="notificationBadge">2</span>
+                        </button>
+                        <div class="notification-panel" id="notificationPanel">
+                            <div class="notification-header">
+                                <h3>Notifications</h3>
+                                <button class="close-btn" onclick="closeNotifications()">×</button>
+                            </div>
+                            <div class="notification-list" id="notificationList">
+                                <div class="notification-item">
+                                    <div class="notification-content">
+                                        <p class="notification-title">Booking Confirmed</p>
+                                        <p class="notification-message">Your booking has been confirmed</p>
+                                        <span class="notification-time">2 hours ago</span>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-content">
+                                        <p class="notification-title">Payment Reminder</p>
+                                        <p class="notification-message">Payment due for booking #B456</p>
+                                        <span class="notification-time">1 day ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification-footer">
+                                <button class="view-all-btn" onclick="viewAllNotifications()">View All</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div class="settings-container">
+                        <button class="settings-btn" id="settingsBtn" title="Settings">⚙️</button>
+                        <div class="settings-panel" id="settingsPanel">
+                            <div class="settings-header">
+                                <h3>Settings</h3>
+                                <button class="close-btn" onclick="closeSettings()">×</button>
+                            </div>
+                            <div class="settings-content">
+                                <div class="setting-item">
+                                    <label>
+                                        <input type="checkbox" id="emailNotifications" checked> Email Notifications
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <label>
+                                        <input type="checkbox" id="darkMode"> Dark Mode
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <label>
+                                        <input type="checkbox" id="soundAlerts" checked> Sound Alerts
+                                    </label>
+                                </div>
+                                <div class="setting-divider"></div>
+                                <div class="setting-item">
+                                    <a href="#" onclick="openAccountSettings(event)">Account Settings</a>
+                                </div>
+                                <div class="setting-item">
+                                    <a href="#" onclick="openPrivacy(event)">Privacy & Security</a>
+                                </div>
+                                <div class="setting-item">
+                                    <a href="#" onclick="openHelp(event)">Help & Support</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Profile -->
+                    <div class="user-profile-container">
+                        <button class="user-profile-btn" id="profileBtn">
+                            <div class="profile-avatar">👤</div>
+                            <span id="currentUsername">Client</span>
+                        </button>
+                        <div class="profile-panel" id="profilePanel">
+                            <div class="profile-header">
+                                <div class="profile-avatar-large">👤</div>
+                                <div class="profile-info">
+                                    <h4 id="profileName">Client User</h4>
+                                    <p id="profileUsername">client-user</p>
+                                    <p class="profile-role">Customer</p>
+                                </div>
+                            </div>
+                            <div class="profile-divider"></div>
+                            <div class="profile-menu">
+                                <a href="/client/pages/client/profile.html">View Profile</a>
+                                <a href="/client/pages/client/profile.html">Edit Profile</a>
+                                <a href="#" onclick="changePassword(event)">Change Password</a>
+                            </div>
+                            <div class="profile-divider"></div>
+                            <div class="logout-section">
+                                <button class="logout-link" onclick="logout()">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <h1>Welcome to Your Dashboard</h1>
+
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <h3>Active Bookings</h3>
+                        <p class="card-number" id="activeBookings">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Completed Rentals</h3>
+                        <p class="card-number" id="completedRentals">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Total Spent</h3>
+                        <p class="card-number" id="totalSpent">₱0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Payment Status</h3>
+                        <p class="card-status" id="paymentStatus">Paid</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h2>Recent Bookings</h2>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Vehicle</th>
+                                <th>Booking Date</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentBookingsTable">
+                            <tr>
+                                <td>Honda CB150</td>
+                                <td>Jan 8, 2025</td>
+                                <td>3 days</td>
+                                <td><span class="badge active">Active</span></td>
+                                <td><a href="/client/pages/client/my-bookings.html" class="link">View</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/client/js/backend.js"></script>
+    <script>
+        function checkAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser || currentUser.role !== 'client') {
+                window.location.href = '../../pages/login.html?role=client';
+            }
+            document.getElementById('currentUsername').textContent = currentUser.username;
+            document.getElementById('profileName').textContent = currentUser.name;
+            document.getElementById('profileUsername').textContent = currentUser.username;
+        }
+
+        function loadDashboardData() {
+            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            const clientBookings = bookings.filter(b => b.clientUsername === JSON.parse(localStorage.getItem('currentUser')).username);
+            
+            const activeCount = clientBookings.filter(b => b.status === 'Active').length;
+            const completedCount = clientBookings.filter(b => b.status === 'Completed').length;
+            const totalSpent = clientBookings.reduce((sum, b) => sum + (b.totalCost || 0), 0);
+
+            document.getElementById('activeBookings').textContent = activeCount;
+            document.getElementById('completedRentals').textContent = completedCount;
+            document.getElementById('totalSpent').textContent = '₱' + totalSpent.toLocaleString();
+        }
+
+        function closeNotifications() {
+            document.getElementById('notificationPanel').style.display = 'none';
+        }
+
+        function viewAllNotifications() {
+            alert('View All Notifications');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsPanel').style.display = 'none';
+        }
+
+        function openAccountSettings(event) {
+            event.preventDefault();
+            alert('Open Account Settings');
+        }
+
+        function openPrivacy(event) {
+            event.preventDefault();
+            alert('Open Privacy & Security');
+        }
+
+        function openHelp(event) {
+            event.preventDefault();
+            alert('Open Help & Support');
+        }
+
+        function changePassword(event) {
+            event.preventDefault();
+            alert('Change Password');
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = '../../pages/login.html';
+        }
+
+        checkAuth();
+        loadDashboardData();
+    </script>
+</body>
+</html>

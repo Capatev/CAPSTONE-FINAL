@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Reservation - Client | MVRMS</title>
+    <link rel="stylesheet" href="/client/css/client.css">
+    <link rel="icon" type="image/png" href="/client/images/logo.png">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/client/images/logo.png" alt="Logo" class="sidebar-logo">
+                <h2>MVRMS</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
+                <a href="/client/pages/client/browse-vehicles.html" class="nav-item">Browse Vehicles</a>
+                <a href="/client/pages/client/make-reservation.html" class="nav-item active">Make Reservation</a>
+                <a href="/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
+                <a href="/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
+                <a href="/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
+                <a href="/client/pages/client/profile.html" class="nav-item">Profile</a>
+                <a href="/client/pages/client/verifyid.html" class="nav-item">Verify ID</a>
+                <a href="/client/pages/login.html" class="nav-item logout">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="user-menu">
+                    <button class="notification-btn">🔔</button>
+                    <button class="settings-btn">⚙️</button>
+                    <div class="user-profile">
+                        <div class="user-avatar">👤</div>
+                        <div class="user-info">
+                            <span id="currentUsername">Client</span>
+                            <span class="user-role">Client</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <h1>Make a Reservation</h1>
+
+                <form id="reservationForm" class="reservation-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="vehicleSelect">Select Vehicle:</label>
+                            <select id="vehicleSelect" required>
+                                <option value="">-- Select a vehicle --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pickupDate">Pickup Date:</label>
+                            <input type="date" id="pickupDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="returnDate">Return Date:</label>
+                            <input type="date" id="returnDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pickupLocation">Pickup Location:</label>
+                            <input type="text" id="pickupLocation" placeholder="Enter pickup location" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dropoffLocation">Drop-off Location:</label>
+                            <input type="text" id="dropoffLocation" placeholder="Enter drop-off location" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additionalNotes">Additional Notes:</label>
+                        <textarea id="additionalNotes" placeholder="Any special requests..." rows="4"></textarea>
+                    </div>
+
+                    <div class="cost-summary">
+                        <h3>Cost Summary</h3>
+                        <p>Daily Rate: <span id="dailyRate">₱0</span></p>
+                        <p>Number of Days: <span id="numberOfDays">0</span></p>
+                        <p class="total">Total Cost: <span id="totalCost">₱0</span></p>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Confirm Reservation</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="/client/js/backend.js"></script>
+    <script>
+        function checkAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser || currentUser.role !== 'client') {
+                window.location.href = '/client/pages/login.html?role=client';
+            }
+            document.getElementById('currentUsername').textContent = currentUser.username;
+        }
+
+        function loadVehiclesSelect() {
+            const vehicles = getVehicles();
+            const select = document.getElementById('vehicleSelect');
+            select.innerHTML = '<option value="">-- Select a vehicle --</option>' + 
+                vehicles.map(v => `<option value="${v.id}" data-rate="${v.dailyRate}">${v.name} - ₱${v.dailyRate}/day</option>`).join('');
+        }
+
+        function calculateCost() {
+            const vehicleSelect = document.getElementById('vehicleSelect');
+            const pickupDate = new Date(document.getElementById('pickupDate').value);
+            const returnDate = new Date(document.getElementById('returnDate').value);
+
+            if (!vehicleSelect.value || !document.getElementById('pickupDate').value || !document.getElementById('returnDate').value) {
+                return;
+            }
+
+            const days = Math.ceil((returnDate - pickupDate) / (1000 * 60 * 60 * 24));
+            const dailyRate = parseInt(vehicleSelect.options[vehicleSelect.selectedIndex].getAttribute('data-rate'));
+            const totalCost = days * dailyRate;
+
+            document.getElementById('numberOfDays').textContent = Math.max(days, 1);
+            document.getElementById('dailyRate').textContent = '₱' + dailyRate;
+            document.getElementById('totalCost').textContent = '₱' + totalCost.toLocaleString();
+        }
+
+        document.getElementById('vehicleSelect').addEventListener('change', calculateCost);
+        document.getElementById('pickupDate').addEventListener('change', calculateCost);
+        document.getElementById('returnDate').addEventListener('change', calculateCost);
+
+        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const vehicles = getVehicles();
+            const selectedVehicleId = document.getElementById('vehicleSelect').value;
+            const selectedVehicle = vehicles.find(v => v.id === selectedVehicleId);
+
+            const booking = {
+                id: 'BK-' + Date.now(),
+                clientUsername: currentUser.username,
+                vehicleId: selectedVehicleId,
+                vehicleName: selectedVehicle.name,
+                pickupDate: document.getElementById('pickupDate').value,
+                returnDate: document.getElementById('returnDate').value,
+                pickupLocation: document.getElementById('pickupLocation').value,
+                dropoffLocation: document.getElementById('dropoffLocation').value,
+                additionalNotes: document.getElementById('additionalNotes').value,
+                totalCost: parseInt(document.getElementById('totalCost').textContent.replace(/[₱,]/g, '')),
+                status: 'Active',
+                createdAt: new Date().toISOString()
+            };
+
+            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            bookings.push(booking);
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+
+            alert('Reservation confirmed! Booking ID: ' + booking.id);
+            window.location.href = 'my-bookings.html';
+        });
+
+        checkAuth();
+        loadVehiclesSelect();
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Clients - MVRS Staff</title>
+    <link rel="stylesheet" href="/staff/css/staff.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">STAFF</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/staff/staff.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/staff/pages/process-booking.html" class="menu-item">
+                    <span class="icon">📝</span>
+                    <span>Process Booking</span>
+                </a>
+                <a href="/staff/pages/vehicle-availability.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Vehicle Availability</span>
+                </a>
+                <a href="/staff/pages/verify-clients.html" class="menu-item active">
+                    <span class="icon">✓</span>
+                    <span>Verify Clients</span>
+                </a>
+                <a href="/staff/pages/asset-management.html" class="menu-item">
+                    <span class="icon">📦</span>
+                    <span>Asset Management</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">BILLING</p>
+                    <a href="/staff/pages/handle-billing.html" class="menu-item">
+                        <span class="icon">💰</span>
+                        <span>Handle Billing</span>
+                    </a>
+                    <a href="/staff/pages/payment-methods.html" class="menu-item">
+                        <span class="icon">💳</span>
+                        <span>Payment Methods</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Verify Clients</h1>
+                <div class="user-info">
+                    <span class="username">staff-user</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Client ID Verification</h2>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchClient" placeholder="Search by name or ID..." class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterVerification" class="filter-select">
+                                <option value="">All</option>
+                                <option value="pending">Pending</option>
+                                <option value="verified">Verified</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>ID Type</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 20px;">Loading clients...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Client Verification Modal -->
+    <div id="verificationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Verify Client ID</h2>
+                <button class="close-btn" onclick="closeVerificationModal()">×</button>
+            </div>
+            <div id="verificationContent">
+                <!-- Content loaded dynamically -->
+            </div>
+            <form id="verificationForm">
+                <div class="form-group">
+                    <label for="verificationStatus">Verification Status *</label>
+                    <select id="verificationStatus" required>
+                        <option value="">Select status...</option>
+                        <option value="verified">Verified</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="pending">Pending Review</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="verificationNotes">Notes</label>
+                    <textarea id="verificationNotes" placeholder="Add verification notes..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeVerificationModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Verification</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System - Staff Interface.</p>
+    </footer>
+
+    <script src="/staff/js/backend.js"></script>
+    <script src="/staff/js/shared-script.js"></script>
+    <script src="/staff/js/verify-clients.js"></script>
+</body>
+</html>

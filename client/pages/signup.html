@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - MVRMS</title>
+    <link rel="stylesheet" href="/client/css/client.css">
+    <link rel="icon" type="image/png" href="/client/images/logo.png">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="/client/index.html">
+                        <img src="/client/images/logo.png" alt="Rento Logo" class="logo">
+                        <h1>MVRMS</h1>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <a href="/client/index.html" class="nav-link">About Us</a>
+                    <a href="/client/pages/login.html" class="nav-link">Login</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="auth-page">
+        <div class="auth-container">
+            <div class="auth-left">
+                <img src="/client/images/logo.png" alt="Rento Logo" class="auth-logo">
+                <h2>Sign Up Form</h2>
+                <p>Motor Vehicle Rental Services</p>
+            </div>
+
+            <div class="auth-right">
+                <div class="form-box">
+                    <h3>MVRMS</h3>
+                    <p>Rental Management System</p>
+
+                    <form id="signupForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="fullname">Full Name</label>
+                            <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signup-username">Username</label>
+                            <input type="text" id="signup-username" name="signup-username" placeholder="Enter your username" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" name="signup-password" placeholder="Choose a password" required>
+                            <small>Strength must be 8+ chars, 1 number</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <input type="password" id="confirm-password" name="confirm-password" placeholder="Re-enter your password" required>
+                        </div>
+
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="id-agree" name="id-agree" required>
+                            <label for="id-agree">I agree to provide valid ID for verification</label>
+                        </div>
+
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="terms-agree" name="terms-agree" required>
+                            <label for="terms-agree">By signing up, you agree to our Terms and Privacy Policy</label>
+                        </div>
+
+                        <button type="submit" class="btn-login">Create Account</button>
+                    </form>
+
+                    <p class="auth-link">Already have an account? <a href="/client/pages/login.html">Log In</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Rento Motorcycle Rental. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/client/js/backend.js"></script>
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const username = document.getElementById('signup-username').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            if (password.length < 8 || !/\d/.test(password)) {
+                alert('Password must be at least 8 characters and contain a number');
+                return;
+            }
+
+            const newUser = {
+                fullname: fullname,
+                email: email,
+                phone: phone,
+                username: username,
+                password: password,
+                role: 'client',
+                createdAt: new Date().toISOString(),
+                idVerified: false
+            };
+
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            if (users[username]) {
+                alert('Username already exists');
+                return;
+            }
+
+            users[username] = newUser;
+            localStorage.setItem('users', JSON.stringify(users));
+
+            const user = {
+                username: username,
+                role: 'client',
+                loginTime: new Date().toISOString()
+            };
+
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            alert('Account created successfully!');
+            window.location.href = '../pages/client/dashboard.html';
+        });
+    </script>
+</body>
+</html>

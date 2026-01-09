@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management - MVRS Staff</title>
+    <link rel="stylesheet" href="/staff/css/staff.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">STAFF</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/staff/staff.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/staff/pages/process-booking.html" class="menu-item">
+                    <span class="icon">📝</span>
+                    <span>Process Booking</span>
+                </a>
+                <a href="/staff/pages/vehicle-availability.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Vehicle Availability</span>
+                </a>
+                <a href="/staff/pages/verify-clients.html" class="menu-item">
+                    <span class="icon">✓</span>
+                    <span>Verify Clients</span>
+                </a>
+                <a href="/staff/pages/asset-management.html" class="menu-item active">
+                    <span class="icon">📦</span>
+                    <span>Asset Management</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">BILLING</p>
+                    <a href="/staff/pages/handle-billing.html" class="menu-item">
+                        <span class="icon">💰</span>
+                        <span>Handle Billing</span>
+                    </a>
+                    <a href="/staff/pages/payment-methods.html" class="menu-item">
+                        <span class="icon">💳</span>
+                        <span>Payment Methods</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Asset Management</h1>
+                <div class="user-info">
+                    <span class="username">staff-user</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Vehicle Assets</h2>
+                        <button class="btn btn-primary" onclick="showAddAssetModal()">+ Add Asset</button>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchAssets" placeholder="Search assets..." class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterAssetType" class="filter-select">
+                                <option value="">All Types</option>
+                                <option value="vehicle">Vehicle</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Asset ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Condition</th>
+                                <th>Last Updated</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assetsTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 20px;">Loading assets...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Asset Summary -->
+                <div class="section" style="margin-top: 30px;">
+                    <h2>Asset Summary</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <p class="stat-label">Total Assets</p>
+                            <p class="stat-value" id="totalAssets">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <p class="stat-label">Total Value</p>
+                            <p class="stat-value" id="totalAssetValue">₱0</p>
+                        </div>
+                        <div class="stat-card">
+                            <p class="stat-label">Good Condition</p>
+                            <p class="stat-value" id="goodCondition">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <p class="stat-label">Needs Repair</p>
+                            <p class="stat-value" id="needsRepair">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Asset Modal -->
+    <div id="assetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Asset</h2>
+                <button class="close-btn" onclick="closeAddAssetModal()">×</button>
+            </div>
+            <form id="assetForm">
+                <div class="form-group">
+                    <label for="assetName">Asset Name *</label>
+                    <input type="text" id="assetName" required placeholder="Enter asset name">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="assetType">Asset Type *</label>
+                        <select id="assetType" required>
+                            <option value="">Select type...</option>
+                            <option value="vehicle">Vehicle</option>
+                            <option value="equipment">Equipment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assetValue">Value (₱) *</label>
+                        <input type="number" id="assetValue" required placeholder="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="assetCondition">Condition *</label>
+                    <select id="assetCondition" required>
+                        <option value="">Select condition...</option>
+                        <option value="excellent">Excellent</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                        <option value="poor">Poor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="assetDescription">Description</label>
+                    <textarea id="assetDescription" placeholder="Add asset details..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddAssetModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Asset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System - Staff Interface.</p>
+    </footer>
+
+    <script src="/staff/js/backend.js"></script>
+    <script src="/staff/js/shared-script.js"></script>
+    <script src="/staff/js/asset-management.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Methods - MVRS Staff</title>
+    <link rel="stylesheet" href="/staff/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">STAFF</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/staff/staff.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/staff/pages/process-booking.html" class="menu-item">
+                    <span class="icon">📝</span>
+                    <span>Process Booking</span>
+                </a>
+                <a href="/staff/pages/vehicle-availability.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Vehicle Availability</span>
+                </a>
+                <a href="/staff/pages/verify-clients.html" class="menu-item">
+                    <span class="icon">✓</span>
+                    <span>Verify Clients</span>
+                </a>
+                <a href="/staff/pages/asset-management.html" class="menu-item">
+                    <span class="icon">📦</span>
+                    <span>Asset Management</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">BILLING</p>
+                    <a href="/staff/pages/handle-billing.html" class="menu-item">
+                        <span class="icon">💰</span>
+                        <span>Handle Billing</span>
+                    </a>
+                    <a href="/staff/pages/payment-methods.html" class="menu-item active">
+                        <span class="icon">💳</span>
+                        <span>Payment Methods</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Payment Methods</h1>
+                <div class="user-info">
+                    <span class="username">staff-user</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Payment Method Summary -->
+                <div class="section">
+                    <h2>Payment Methods Configuration</h2>
+                    <div class="payment-methods-grid">
+                        <div class="payment-card">
+                            <div class="payment-icon">💵</div>
+                            <h3>Cash</h3>
+                            <p class="method-status active">Active</p>
+                            <button class="btn btn-secondary btn-sm" onclick="editPaymentMethod('cash')">Configure</button>
+                        </div>
+
+                        <div class="payment-card">
+                            <div class="payment-icon">📱</div>
+                            <h3>GCash</h3>
+                            <p class="method-status active">Active</p>
+                            <button class="btn btn-secondary btn-sm" onclick="editPaymentMethod('gcash')">Configure</button>
+                        </div>
+
+                        <div class="payment-card">
+                            <div class="payment-icon">🏦</div>
+                            <h3>Bank Transfer</h3>
+                            <p class="method-status active">Active</p>
+                            <button class="btn btn-secondary btn-sm" onclick="editPaymentMethod('bank')">Configure</button>
+                        </div>
+
+                        <div class="payment-card">
+                            <div class="payment-icon">💳</div>
+                            <h3>Credit Card</h3>
+                            <p class="method-status inactive">Inactive</p>
+                            <button class="btn btn-secondary btn-sm" onclick="editPaymentMethod('credit')">Configure</button>
+                        </div>
+
+                        <div class="payment-card">
+                            <div class="payment-icon">✓</div>
+                            <h3>Check</h3>
+                            <p class="method-status active">Active</p>
+                            <button class="btn btn-secondary btn-sm" onclick="editPaymentMethod('check')">Configure</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Transactions -->
+                <div class="section" style="margin-top: 30px;">
+                    <div class="section-header">
+                        <h2>Recent Transactions</h2>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchTransaction" placeholder="Search transactions..." class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterPaymentMethod" class="filter-select">
+                                <option value="">All Methods</option>
+                                <option value="cash">Cash</option>
+                                <option value="gcash">GCash</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="check">Check</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Invoice</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 20px;">Loading transactions...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Payment Method Modal -->
+    <div id="paymentMethodModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Configure Payment Method</h2>
+                <button class="close-btn" onclick="closePaymentMethodModal()">×</button>
+            </div>
+            <form id="paymentMethodForm">
+                <div class="form-group">
+                    <label for="methodStatus">Status *</label>
+                    <select id="methodStatus" required>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <div id="methodSpecificFields">
+                    <!-- Dynamically populated based on payment method -->
+                </div>
+
+                <div class="form-group">
+                    <label for="methodNotes">Notes</label>
+                    <textarea id="methodNotes" placeholder="Add configuration notes..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closePaymentMethodModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Configuration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System - Staff Interface.</p>
+    </footer>
+
+    <script src="/staff/js/backend.js"></script>
+    <script src="/staff/js/shared-script.js"></script>
+    <script src="/staff/js/payment-methods.js"></script>
+</body>
+</html>
