@@ -1,265 +1,287 @@
-// Mock Database for Driver Interface
+/**
+ * MVRS Driver Backend - PHP Database Integration
+ */
+
+// API Configuration
+const API_BASE_URL = "../php/api"
+
+// API Request Helper
+async function apiRequest(endpoint, options = {}) {
+  const url = `${API_BASE_URL}/${endpoint}`
+
+  const config = {
+    method: options.method || "GET",
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  }
+
+  if (options.body) {
+    config.body = JSON.stringify(options.body)
+  }
+
+  try {
+    const response = await fetch(url, config)
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("API Error:", error)
+    return { success: false, message: error.message }
+  }
+}
+
+// Mock Database for Driver Interface (loaded from API)
 const driverDB = {
-  // Current logged-in driver
   currentDriver: null,
-
-  // Registered drivers
-  drivers: {
-    driver1: {
-      id: "DRV001",
-      username: "driver1",
-      password: "password123",
-      fullname: "Juan Dela Cruz",
-      email: "juan@email.com",
-      phone: "09123456789",
-      address: "123 Driver St, Manila",
-      licenseNumber: "DL-12345678",
-      licenseExpiry: "2026-12-31",
-      licenseType: "Manual",
-      emergencyName: "Maria Dela Cruz",
-      emergencyPhone: "09111111111",
-      emergencyRelation: "Sister",
-      role: "driver",
-      memberSince: "2024-01-15",
-      status: "Active",
-    },
-    demo_driver: {
-      id: "DRV002",
-      username: "demo_driver",
-      password: "demo123",
-      fullname: "Demo Driver",
-      email: "demo@email.com",
-      phone: "09987654321",
-      address: "456 Driver Ave, Cebu",
-      licenseNumber: "DL-87654321",
-      licenseExpiry: "2025-12-31",
-      licenseType: "Manual",
-      emergencyName: "Demo Contact",
-      emergencyPhone: "09222222222",
-      emergencyRelation: "Friend",
-      role: "driver",
-      memberSince: "2024-03-20",
-      status: "Active",
-    },
-  },
-
-  // Driver Bookings
-  bookings: [
-    {
-      id: "BK001",
-      driverId: "DRV001",
-      vehicleId: "VEH001",
-      vehicleName: "125cc Honda",
-      clientName: "John Doe",
-      bookingDate: "2026-01-08",
-      startDate: "2026-01-08",
-      endDate: "2026-01-10",
-      status: "active",
-      pickupLocation: "Main Branch",
-      dropoffLocation: "Airport",
-      totalAmount: 1500,
-    },
-    {
-      id: "BK002",
-      driverId: "DRV001",
-      vehicleId: "VEH002",
-      vehicleName: "150cc Suzuki",
-      clientName: "Jane Smith",
-      bookingDate: "2026-01-09",
-      startDate: "2026-01-10",
-      endDate: "2026-01-12",
-      status: "pending",
-      pickupLocation: "Main Branch",
-      dropoffLocation: "Hotel",
-      totalAmount: 1800,
-    },
-    {
-      id: "BK003",
-      driverId: "DRV001",
-      vehicleId: "VEH003",
-      vehicleName: "Honda Civic",
-      clientName: "Robert Johnson",
-      bookingDate: "2026-01-07",
-      startDate: "2026-01-05",
-      endDate: "2026-01-07",
-      status: "completed",
-      pickupLocation: "Main Branch",
-      dropoffLocation: "City Center",
-      totalAmount: 5000,
-    },
-  ],
-
-  // Vehicle Fleet
-  vehicles: [
-    {
-      id: "VEH001",
-      name: "125cc Honda",
-      type: "motorcycle",
-      model: "CB125",
-      year: 2024,
-      specs: "125cc, 4-stroke",
-      dailyRate: 500,
-      availability: "available",
-    },
-    {
-      id: "VEH002",
-      name: "150cc Suzuki",
-      type: "motorcycle",
-      model: "GSX-S150",
-      year: 2023,
-      specs: "150cc, 4-stroke",
-      dailyRate: 600,
-      availability: "available",
-    },
-    {
-      id: "VEH003",
-      name: "Honda Civic",
-      type: "sedan",
-      model: "Civic 2024",
-      year: 2024,
-      specs: "2.0L, Auto",
-      dailyRate: 2500,
-      availability: "available",
-    },
-  ],
-
-  // Check In/Out Records
-  checkInOutRecords: [
-    {
-      id: "CHK001",
-      bookingId: "BK001",
-      vehicleId: "VEH001",
-      type: "checkout",
-      mileage: 5000,
-      fuel: "full",
-      condition: "Good condition, no damages",
-      timestamp: "2026-01-08 08:00 AM",
-    },
-    {
-      id: "CHK002",
-      bookingId: "BK001",
-      vehicleId: "VEH001",
-      type: "checkin",
-      mileage: 5050,
-      fuel: "3/4",
-      condition: "Good condition, no new damages",
-      timestamp: "2026-01-10 05:30 PM",
-    },
-  ],
-
-  // Driver Issues
-  issues: [
-    {
-      id: "ISS001",
-      driverId: "DRV001",
-      bookingId: "BK001",
-      vehicleId: "VEH001",
-      severity: "medium",
-      category: "electrical",
-      description: "Headlight flickering occasionally",
-      location: "Main Branch",
-      immediateAction: "Reduced speed, used backup light",
-      status: "reported",
-      timestamp: "2026-01-08 10:30 AM",
-    },
-  ],
+  drivers: {},
+  bookings: [],
+  vehicles: [],
+  checkInOutRecords: [],
+  issues: [],
 
   // Authentication Methods
-  login: function (username, password, role) {
-    if (role === "driver") {
-      const driver = this.drivers[username]
-      if (driver && driver.password === password) {
-        this.currentDriver = driver
-        return { success: true, driver: driver }
-      }
+  async login(username, password, role) {
+    if (role !== "driver") {
+      return { success: false, error: "Invalid role" }
     }
-    return { success: false, error: "Invalid credentials" }
+
+    const response = await apiRequest("auth.php?action=login", {
+      method: "POST",
+      body: { username, password, role: "driver" },
+    })
+
+    if (response.success) {
+      this.currentDriver = response.data
+      localStorage.setItem("mvrms_user", JSON.stringify(response.data))
+      return { success: true, driver: response.data }
+    }
+
+    return { success: false, error: response.message || "Invalid credentials" }
   },
 
-  logout: function () {
+  async logout() {
     this.currentDriver = null
+    localStorage.removeItem("mvrms_user")
+    await apiRequest("auth.php?action=logout", { method: "POST" })
   },
 
   // Get Driver Methods
-  getCurrentDriver: function () {
+  getCurrentDriver() {
+    if (!this.currentDriver) {
+      const stored = localStorage.getItem("mvrms_user")
+      if (stored) {
+        this.currentDriver = JSON.parse(stored)
+      }
+    }
     return this.currentDriver
   },
 
-  getBookingsByDriver: function (driverId, status = null) {
-    let filtered = this.bookings.filter((b) => b.driverId === driverId)
+  async loadDriverData() {
+    const driver = this.getCurrentDriver()
+    if (!driver) return
+
+    // Load bookings assigned to this driver
+    const bookingsRes = await apiRequest(`reservations.php?driver_id=${driver.id}`)
+    if (bookingsRes.success) {
+      this.bookings = (bookingsRes.data || []).map((r) => ({
+        id: r.reservation_code,
+        dbId: r.id,
+        driverId: driver.id,
+        vehicleId: r.vehicle_id,
+        vehicleName: `${r.vehicle_plate} - ${r.vehicle_model}`,
+        clientName: r.user_name,
+        bookingDate: r.created_at?.split("T")[0],
+        startDate: r.start_date,
+        endDate: r.end_date,
+        status: r.status,
+        pickupLocation: r.pickup_location,
+        dropoffLocation: r.dropoff_location,
+        totalAmount: Number.parseFloat(r.total_amount),
+      }))
+    }
+
+    // Load vehicles
+    const vehiclesRes = await apiRequest("vehicles.php")
+    if (vehiclesRes.success) {
+      this.vehicles = (vehiclesRes.data || []).map((v) => ({
+        id: v.id,
+        name: v.model,
+        type: v.type,
+        model: v.model,
+        year: v.year,
+        specs: v.specs,
+        dailyRate: Number.parseFloat(v.daily_rate),
+        availability: v.status,
+        plate: v.plate,
+      }))
+    }
+
+    // Load check records
+    const checkRes = await apiRequest("check-records.php")
+    if (checkRes.success) {
+      this.checkInOutRecords = (checkRes.data || []).map((c) => ({
+        id: c.record_code,
+        dbId: c.id,
+        bookingId: c.reservation_id,
+        vehicleId: c.vehicle_id,
+        type: c.type,
+        mileage: c.mileage,
+        fuel: c.fuel_level,
+        condition: c.vehicle_condition,
+        timestamp: c.recorded_at,
+      }))
+    }
+
+    // Load issues reported by this driver
+    const issuesRes = await apiRequest(`issues.php?reporter_id=${driver.id}`)
+    if (issuesRes.success) {
+      this.issues = (issuesRes.data || []).map((i) => ({
+        id: i.issue_code,
+        dbId: i.id,
+        driverId: i.reporter_id,
+        bookingId: i.reservation_id,
+        vehicleId: i.vehicle_id,
+        severity: i.severity,
+        category: i.category,
+        description: i.description,
+        location: i.location,
+        immediateAction: i.immediate_action,
+        status: i.status,
+        timestamp: i.created_at,
+      }))
+    }
+  },
+
+  getBookingsByDriver(driverId, status = null) {
+    let filtered = this.bookings.filter((b) => b.driverId == driverId)
     if (status) {
       filtered = filtered.filter((b) => b.status === status)
     }
     return filtered
   },
 
-  getVehicleById: function (vehicleId) {
-    return this.vehicles.find((v) => v.id === vehicleId)
+  getVehicleById(vehicleId) {
+    return this.vehicles.find((v) => v.id == vehicleId)
   },
 
   // Check In/Out Methods
-  addCheckInOut: function (checkInOutData) {
-    const id = "CHK" + String(this.checkInOutRecords.length + 1).padStart(3, "0")
-    const record = {
-      id: id,
-      ...checkInOutData,
-      timestamp: new Date().toLocaleString(),
+  async addCheckInOut(checkInOutData) {
+    const response = await apiRequest("check-records.php", {
+      method: "POST",
+      body: {
+        reservation_id: checkInOutData.bookingId,
+        vehicle_id: checkInOutData.vehicleId,
+        driver_id: this.currentDriver?.id,
+        type: checkInOutData.type,
+        mileage: checkInOutData.mileage,
+        fuel_level: checkInOutData.fuel,
+        vehicle_condition: checkInOutData.condition,
+      },
+    })
+
+    if (response.success) {
+      await this.loadDriverData()
+      return {
+        id: response.data.record_code,
+        ...checkInOutData,
+        timestamp: new Date().toLocaleString(),
+      }
     }
-    this.checkInOutRecords.push(record)
-    return record
+    return null
   },
 
-  getCheckInOutRecords: function (vehicleId = null) {
+  getCheckInOutRecords(vehicleId = null) {
     if (vehicleId) {
-      return this.checkInOutRecords.filter((r) => r.vehicleId === vehicleId)
+      return this.checkInOutRecords.filter((r) => r.vehicleId == vehicleId)
     }
     return this.checkInOutRecords
   },
 
   // Issue Reporting Methods
-  reportIssue: function (issueData) {
-    const id = "ISS" + String(this.issues.length + 1).padStart(3, "0")
-    const issue = {
-      id: id,
-      ...issueData,
-      status: "reported",
-      timestamp: new Date().toLocaleString(),
+  async reportIssue(issueData) {
+    const response = await apiRequest("issues.php", {
+      method: "POST",
+      body: {
+        reporter_id: this.currentDriver?.id || issueData.driverId,
+        vehicle_id: issueData.vehicleId,
+        reservation_id: issueData.bookingId,
+        severity: issueData.severity,
+        category: issueData.category,
+        description: issueData.description,
+        location: issueData.location,
+        immediate_action: issueData.immediateAction,
+      },
+    })
+
+    if (response.success) {
+      await this.loadDriverData()
+      return {
+        id: response.data.issue_code,
+        ...issueData,
+        status: "reported",
+        timestamp: new Date().toLocaleString(),
+      }
     }
-    this.issues.push(issue)
-    return issue
+    return null
   },
 
-  getIssuesByDriver: function (driverId) {
-    return this.issues.filter((i) => i.driverId === driverId)
+  getIssuesByDriver(driverId) {
+    return this.issues.filter((i) => i.driverId == driverId)
   },
 
   // Profile Update Method
-  updateDriverProfile: function (driverId, updates) {
-    if (this.drivers[driverId]) {
-      this.drivers[driverId] = {
-        ...this.drivers[driverId],
-        ...updates,
+  async updateDriverProfile(driverId, updates) {
+    const response = await apiRequest(`users.php?id=${driverId}`, {
+      method: "PUT",
+      body: {
+        name: updates.fullname,
+        email: updates.email,
+        phone: updates.phone,
+        address: updates.address,
+        license_number: updates.licenseNumber,
+        license_expiry: updates.licenseExpiry,
+        license_type: updates.licenseType,
+        emergency_name: updates.emergencyName,
+        emergency_phone: updates.emergencyPhone,
+        emergency_relation: updates.emergencyRelation,
+      },
+    })
+
+    if (response.success) {
+      // Update local driver data
+      if (this.currentDriver) {
+        Object.assign(this.currentDriver, updates)
+        localStorage.setItem("mvrms_user", JSON.stringify(this.currentDriver))
       }
-      this.currentDriver = this.drivers[driverId]
-      return this.drivers[driverId]
+      return this.currentDriver
     }
     return null
   },
 
   // KPI Methods
-  getTodayBookingsCount: function (driverId) {
+  getTodayBookingsCount(driverId) {
     const today = new Date().toISOString().split("T")[0]
-    return this.bookings.filter((b) => b.driverId === driverId && b.bookingDate === today).length
+    return this.bookings.filter((b) => b.driverId == driverId && b.bookingDate === today).length
   },
 
-  getActiveBooking: function (driverId) {
-    return this.bookings.find((b) => b.driverId === driverId && b.status === "active")
+  getActiveBooking(driverId) {
+    return this.bookings.find((b) => b.driverId == driverId && b.status === "active")
   },
 
-  getPendingCheckIns: function (driverId) {
+  getPendingCheckIns(driverId) {
     const activeBooking = this.getActiveBooking(driverId)
     if (!activeBooking) return 0
-    const checkIn = this.checkInOutRecords.find((r) => r.bookingId === activeBooking.id && r.type === "checkin")
+    const checkIn = this.checkInOutRecords.find((r) => r.bookingId === activeBooking.dbId && r.type === "checkin")
     return checkIn ? 0 : 1
   },
 }
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", async () => {
+  const driver = driverDB.getCurrentDriver()
+  if (driver) {
+    await driverDB.loadDriverData()
+  }
+  console.log("Driver backend initialized with PHP API")
+})

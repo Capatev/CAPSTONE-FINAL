@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - MVRMS</title>
-    <link rel="stylesheet" href="/client/css/client.css">
-    <link rel="icon" type="image/png" href="/client/images/logo.png">
+    <link rel="stylesheet" href="/MVRMS/client/css/client.css">
+    <link rel="icon" type="image/png" href="/MVRMS/client/images/logo.png">
+
 </head>
 <body>
     <header class="header">
@@ -13,13 +14,13 @@
             <div class="header-content">
                 <div class="logo-section">
                     <a href="/client/index.html">
-                        <img src="/client/images/logo.png" alt="Rento Logo" class="logo">
+                        <img src="../images/logo.png" alt="MVRMS" class="logo">
                         <h1>MVRMS</h1>
                     </a>
                 </div>
                 <nav class="nav">
-                    <a href="/client/index.html#about" class="nav-link">About Us</a>
-                    <a href="/client/pages/signup.html" class="nav-link">Sign Up</a>
+                    <a href="../index.html#about" class="nav-link">About Us</a>
+                    <a href="../pages/signup.html" class="nav-link">Sign Up</a>
                 </nav>
             </div>
         </div>
@@ -28,7 +29,7 @@
     <main class="auth-page">
         <div class="auth-container">
             <div class="auth-left">
-                <img src="/client/images/logo.png" alt="Rento Logo" class="auth-logo">
+                <img src="../images/logo.png" alt="MVRMS" class="auth-logo">
                 <h2>Login Form</h2>
                 <p>Motor Vehicle Rental Services</p>
             </div>
@@ -63,7 +64,7 @@
                         <button type="submit" class="btn-login">Login</button>
                     </form>
 
-                    <p class="auth-link">Don't have an account? <a href="/client/pages/signup.html">Sign Up</a></p>
+                    <p class="auth-link">Don't have an account? <a href="../pages/signup.html">Sign Up</a></p>
                 </div>
             </div>
         </div>
@@ -75,41 +76,54 @@
         </div>
     </footer>
 
-    <script src="/client/js/backend.js"></script>
+    <script src="../js/backend.js"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const role = document.getElementById('role').value;
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
 
-            if (!role) {
-                alert('Please select a role');
-                return;
-            }
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
 
-            const user = {
-                username: username,
-                role: role,
-                loginTime: new Date().toISOString()
-            };
-
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            
-            const dashboardMap = {
-                'client': '../pages/client/dashboard.html',
-                'staff': '/staff/staff.html',
-                'admin': '/admin/admin.html',
-                'driver': '/driver/driver.html'
-            };
-
-            window.location.href = dashboardMap[role];
-        });
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const roleParam = urlParams.get('role');
-        if (roleParam) {
-            document.getElementById('role').value = roleParam;
+        if (!username || !password || !role) {
+            alert("Please fill out all fields");
+            return;
         }
+
+        fetch("/MVRMS/api/login.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                role: role
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                // save session data
+                localStorage.setItem("currentUser", JSON.stringify(data.user));
+
+                // redirect based on role
+                const dashboardMap = {
+                    client: "/MVRMS/client/pages/client/dashboard.html",
+                    staff: "/MVRMS/staff/staff.html",
+                    admin: "/MVRMS/admin/admin.html",
+                    driver: "/MVRMS/driver/driver.html"
+                };
+
+                window.location.href = dashboardMap[data.user.role];
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Login failed");
+        });
+    });
     </script>
+
 </body>
 </html>

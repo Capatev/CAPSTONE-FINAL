@@ -4,125 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Vehicles - Client | MVRMS</title>
-    <link rel="stylesheet" href="/client/css/client.css">
-    <link rel="icon" type="image/png" href="/client/images/logo.png">
+    <link rel="stylesheet" href="/MVRMS/client/css/client.css">
+    <link rel="icon" type="image/png" href="/MVRMS/client/images/logo.png">
 </head>
 <body>
-    <div class="dashboard-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="/client/images/logo.png" alt="Logo" class="sidebar-logo">
-                <h2>MVRMS</h2>
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/MVRMS/client/images/logo.png" class="sidebar-logo">
+            <h2>MVRMS</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/MVRMS/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
+            <a href="/MVRMS/client/pages/client/browse-vehicles.html" class="nav-item active">Browse Vehicles</a>
+            <a href="/MVRMS/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
+            <a href="/MVRMS/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
+            <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
+            <a href="/MVRMS/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
+            <a href="/MVRMS/client/pages/client/profile.html" class="nav-item">Profile</a>
+            <a href="/MVRMS/client/pages/login.html" class="nav-item logout">Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="search-bar">
+                <input type="text" placeholder="Search vehicles...">
             </div>
-            <nav class="sidebar-nav">
-                <a href="/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
-                <a href="/client/pages/client/browse-vehicles.html" class="nav-item active">Browse Vehicles</a>
-                <a href="/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
-                <a href="/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
-                <a href="/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
-                <a href="/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
-                <a href="/client/pages/client/profile.html" class="nav-item">Profile</a>
-                <a href="/client/pages/client/verifyid.html" class="nav-item">Verify ID</a>
-                <a href="/client/pages/login.html" class="nav-item logout">Logout</a>
-            </nav>
-        </aside>
+        </header>
 
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="search-bar">
-                    <input type="text" id="searchVehicles" placeholder="Search vehicles...">
+        <div class="page-content">
+            <h1>Browse Vehicles</h1>
+
+            <!-- FILTERS -->
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>Type</label>
+                    <select>
+                        <option>All</option>
+                        <option>Motor</option>
+                        <option>Car</option>
+                    </select>
                 </div>
-                <div class="user-menu">
-                    <button class="notification-btn">🔔</button>
-                    <button class="settings-btn">⚙️</button>
-                    <div class="user-profile">
-                        <div class="user-avatar">👤</div>
-                        <div class="user-info">
-                            <span id="currentUsername">Client</span>
-                            <span class="user-role">Client</span>
-                        </div>
-                    </div>
+                <div class="filter-group">
+                    <label>Max Price</label>
+                    <select>
+                        <option>All</option>
+                        <option>₱1000</option>
+                        <option>₱2000</option>
+                    </select>
                 </div>
-            </header>
-
-            <div class="page-content">
-                <h1>Browse Vehicles</h1>
-
-                <div class="filter-section">
-                    <div class="filter-group">
-                        <label for="typeFilter">Type:</label>
-                        <select id="typeFilter">
-                            <option value="">All Types</option>
-                            <option value="motorcycle">Motor</option>
-                            <option value="scooter">Vehicle</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="priceFilter">Max Price:</label>
-                        <select id="priceFilter">
-                            <option value="">All Prices</option>
-                            <option value="500">₱250</option>
-                            <option value="1000">₱300</option>
-                            <option value="2000">₱1500</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="availabilityFilter">Availability:</label>
-                        <select id="availabilityFilter">
-                            <option value="">All</option>
-                            <option value="available">Available</option>
-                            <option value="unavailable">Unavailable</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="vehicles-grid" id="vehiclesGrid">
-                    <!-- Vehicles will be populated here -->
+                <div class="filter-group">
+                    <label>Availability</label>
+                    <select>
+                        <option>All</option>
+                        <option>Available</option>
+                        <option>Rented</option>
+                    </select>
                 </div>
             </div>
-        </main>
-    </div>
 
-    <script src="/client/js/backend.js"></script>
-    <script>
-        function checkAuth() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser || currentUser.role !== 'client') {
-                window.location.href = '../../pages/login.html?role=client';
-            }
-            document.getElementById('currentUsername').textContent = currentUser.username;
-        }
+            <!-- ✅ CONTAINER NA GINAGAMIT NG JS -->
+            <div class="vehicles-grid" id="vehiclesGrid"></div>
 
-        function loadVehicles() {
-            const vehicles = getVehicles();
-            displayVehicles(vehicles);
-        }
+        </div>
+    </main>
+</div>
 
-        function displayVehicles(vehicles) {
-            const grid = document.getElementById('vehiclesGrid');
-            grid.innerHTML = vehicles.map(v => `
-                <div class="vehicle-card">
-                    <div class="vehicle-image">🏍️</div>
-                    <h3>${v.name}</h3>
-                    <p class="vehicle-type">${v.type}</p>
-                    <p class="vehicle-price">₱${v.dailyRate}/day</p>
-                    <p class="vehicle-status ${v.available ? 'available' : 'unavailable'}">
-                        ${v.available ? 'Available' : 'Unavailable'}
-                    </p>
-                    <button onclick="makeReservation('${v.id}')" class="btn-reserve" ${!v.available ? 'disabled' : ''}>
-                        Reserve Now
-                    </button>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/MVRMS/api/browse-vehicles.php")
+        .then(res => res.json())
+        .then(data => renderVehicles(data))
+        .catch(err => console.error("Fetch error:", err));
+});
+
+function renderVehicles(vehicles) {
+    const container = document.getElementById("vehiclesGrid");
+    container.innerHTML = "";
+
+    if (!vehicles || vehicles.length === 0) {
+        container.innerHTML = "<p>No vehicles available.</p>";
+        return;
+    }
+
+    vehicles.forEach(v => { 
+            const imagePath = v.image
+        ? `/MVRMS/client/images/vehicles/${v.image}`
+        : `/MVRMS/client/images/vehicles/default.jpg`;
+
+
+        container.innerHTML += `
+            <div class="vehicle-card">
+                <img src="${imagePath}" alt="${v.vehicle_name}">
+                <div class="vehicle-info">
+                    <h3>${v.vehicle_name}</h3>
+                    <p>${v.brand} ${v.model}</p>
+                    <p class="vehicle-price">₱${v.daily_rate} / day</p>
+                    <span class="vehicle-status ${v.availability.toLowerCase()}">
+                        ${v.availability}
+                    </span>
                 </div>
-            `).join('');
-        }
+                <button onclick="reserveVehicle(${v.vehicle_id})">
+                    Reserve Now
+                </button>
+            </div>
+        `;
+    });
+}
+</script>
 
-        function makeReservation(vehicleId) {
-            localStorage.setItem('selectedVehicle', vehicleId);
-            window.location.href = 'make-reservation.html';
-        }
-
-        checkAuth();
-        loadVehicles();
-    </script>
 </body>
 </html>

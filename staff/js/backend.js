@@ -1,226 +1,131 @@
-// MVRS Staff Backend Database
+/**
+ * MVRS Staff Backend - PHP Database Integration
+ */
+
+// API Configuration
+const API_BASE_URL = "../php/api"
+
+// API Request Helper
+async function apiRequest(endpoint, options = {}) {
+  const url = `${API_BASE_URL}/${endpoint}`
+
+  const config = {
+    method: options.method || "GET",
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  }
+
+  if (options.body) {
+    config.body = JSON.stringify(options.body)
+  }
+
+  try {
+    const response = await fetch(url, config)
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("API Error:", error)
+    return { success: false, message: error.message }
+  }
+}
+
+// Database object for compatibility
 const db = {
-  vehicles: [
-    {
-      id: 1,
-      plate: "ABC-1234",
-      model: "Toyota Corolla",
-      type: "sedan",
-      year: 2022,
-      mileage: 15000,
-      status: "available",
-      dailyRate: 1500,
-      totalRentals: 45,
-    },
-    {
-      id: 2,
-      plate: "ABC-1235",
-      model: "Honda CR-V",
-      type: "suv",
-      year: 2023,
-      mileage: 8000,
-      status: "rented",
-      dailyRate: 2000,
-      totalRentals: 32,
-    },
-    {
-      id: 3,
-      plate: "ABC-1236",
-      model: "Toyota Innova",
-      type: "van",
-      year: 2022,
-      mileage: 22000,
-      status: "available",
-      dailyRate: 2500,
-      totalRentals: 68,
-    },
-    {
-      id: 4,
-      plate: "ABC-1237",
-      model: "Mitsubishi Montero",
-      type: "suv",
-      year: 2021,
-      mileage: 35000,
-      status: "maintenance",
-      dailyRate: 2200,
-      totalRentals: 55,
-    },
-    {
-      id: 5,
-      plate: "ABC-1238",
-      model: "Ford Ranger",
-      type: "truck",
-      year: 2022,
-      mileage: 12000,
-      status: "available",
-      dailyRate: 1800,
-      totalRentals: 28,
-    },
-  ],
+  vehicles: [],
+  clients: [],
+  bookings: [],
+  invoices: [],
+  assets: [],
+  paymentMethods: [],
+  activities: [],
+}
 
-  clients: [
-    {
-      id: 1,
-      name: "Maria Garcia",
-      email: "maria@example.com",
-      phone: "09123456789",
-      idType: "passport",
-      status: "verified",
-      joined: "2023-02-20",
-    },
-    {
-      id: 2,
-      name: "Robert Martinez",
-      email: "robert@example.com",
-      phone: "09123456790",
-      idType: "driver_license",
-      status: "pending",
-      joined: "2024-01-10",
-    },
-    {
-      id: 3,
-      name: "Ana Santos",
-      email: "ana@example.com",
-      phone: "09123456791",
-      idType: "national_id",
-      status: "verified",
-      joined: "2023-06-15",
-    },
-    {
-      id: 4,
-      name: "Luis Fernandez",
-      email: "luis@example.com",
-      phone: "09123456792",
-      idType: "passport",
-      status: "rejected",
-      joined: "2024-02-01",
-    },
-  ],
+// Initialize database from PHP API
+async function initializeStaffDB() {
+  try {
+    const [vehiclesRes, usersRes, reservationsRes, invoicesRes, paymentMethodsRes] = await Promise.all([
+      apiRequest("vehicles.php"),
+      apiRequest("users.php?role=customer"),
+      apiRequest("reservations.php"),
+      apiRequest("invoices.php"),
+      apiRequest("payment-methods.php"),
+    ])
 
-  bookings: [
-    {
-      id: "BK001",
-      clientId: 1,
-      vehicleId: 1,
-      clientName: "Maria Garcia",
-      vehicle: "Toyota Corolla",
-      pickupDate: "2025-01-15",
-      returnDate: "2025-01-18",
-      status: "pending",
-      totalAmount: 4500,
-      notes: "Airport pickup",
-    },
-    {
-      id: "BK002",
-      clientId: 3,
-      vehicleId: 3,
-      clientName: "Ana Santos",
-      vehicle: "Toyota Innova",
-      pickupDate: "2025-01-16",
-      returnDate: "2025-01-20",
-      status: "confirmed",
-      totalAmount: 10000,
-      notes: "Family trip",
-    },
-  ],
+    if (vehiclesRes.success) {
+      db.vehicles = (vehiclesRes.data || []).map((v) => ({
+        id: v.id,
+        plate: v.plate,
+        model: v.model,
+        type: v.type,
+        year: v.year,
+        mileage: v.mileage,
+        status: v.status,
+        dailyRate: Number.parseFloat(v.daily_rate),
+        totalRentals: v.total_rentals,
+      }))
+    }
 
-  invoices: [
-    {
-      id: "INV001",
-      clientId: 1,
-      bookingId: "BK001",
-      clientName: "Maria Garcia",
-      amount: 4500,
-      dueDate: "2025-01-25",
-      status: "pending",
-      paymentMethod: null,
-      createdDate: "2025-01-15",
-    },
-    {
-      id: "INV002",
-      clientId: 3,
-      bookingId: "BK002",
-      clientName: "Ana Santos",
-      amount: 10000,
-      dueDate: "2025-01-30",
-      status: "paid",
-      paymentMethod: "gcash",
-      createdDate: "2025-01-16",
-    },
-  ],
+    if (usersRes.success) {
+      db.clients = (usersRes.data || []).map((u) => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        phone: u.phone,
+        idType: u.id_type || "national_id",
+        status: u.status === "active" ? "verified" : u.status,
+        joined: u.joined,
+      }))
+    }
 
-  assets: [
-    {
-      id: "ASSET001",
-      name: "Toyota Corolla (ABC-1234)",
-      type: "vehicle",
-      value: 850000,
-      condition: "good",
-      lastUpdated: "2025-01-08",
-    },
-    {
-      id: "ASSET002",
-      name: "Honda CR-V (ABC-1235)",
-      type: "vehicle",
-      value: 1200000,
-      condition: "excellent",
-      lastUpdated: "2025-01-07",
-    },
-  ],
+    if (reservationsRes.success) {
+      db.bookings = (reservationsRes.data || []).map((r) => ({
+        id: r.reservation_code,
+        dbId: r.id,
+        clientId: r.user_id,
+        vehicleId: r.vehicle_id,
+        clientName: r.user_name,
+        vehicle: `${r.vehicle_plate} - ${r.vehicle_model}`,
+        pickupDate: r.start_date,
+        returnDate: r.end_date,
+        status: r.status,
+        totalAmount: Number.parseFloat(r.total_amount),
+        notes: r.notes,
+      }))
+    }
 
-  paymentMethods: [
-    {
-      id: "pm_cash",
-      name: "Cash",
-      status: "active",
-      config: {},
-    },
-    {
-      id: "pm_gcash",
-      name: "GCash",
-      status: "active",
-      config: { accountNumber: "639123456789" },
-    },
-    {
-      id: "pm_bank",
-      name: "Bank Transfer",
-      status: "active",
-      config: { bankName: "BDO", accountNumber: "12345678", accountName: "MVRS" },
-    },
-    {
-      id: "pm_credit",
-      name: "Credit Card",
-      status: "inactive",
-      config: {},
-    },
-    {
-      id: "pm_check",
-      name: "Check",
-      status: "active",
-      config: {},
-    },
-  ],
+    if (invoicesRes.success) {
+      db.invoices = (invoicesRes.data || []).map((i) => ({
+        id: i.invoice_code,
+        dbId: i.id,
+        clientId: i.user_id,
+        bookingId: i.reservation_id,
+        clientName: i.user_name,
+        amount: Number.parseFloat(i.total_amount),
+        dueDate: i.due_date,
+        status: i.status,
+        paymentMethod: i.payment_method,
+        createdDate: i.created_at,
+      }))
+    }
 
-  activities: [
-    {
-      type: "booking",
-      details: "New booking processed - BK001",
-      status: "completed",
-      time: "09:30 AM",
-    },
-    {
-      type: "verification",
-      details: "Client ID verified - Maria Garcia",
-      status: "completed",
-      time: "08:45 AM",
-    },
-    {
-      type: "payment",
-      details: "Payment received - INV002",
-      status: "completed",
-      time: "03:15 PM",
-    },
-  ],
+    if (paymentMethodsRes.success) {
+      db.paymentMethods = (paymentMethodsRes.data || []).map((pm) => ({
+        id: pm.method_code,
+        dbId: pm.id,
+        name: pm.name,
+        status: pm.status,
+        config: pm.account_details || {},
+      }))
+    }
+
+    console.log("Staff database initialized from PHP API")
+    return true
+  } catch (error) {
+    console.error("Failed to initialize staff database:", error)
+    return false
+  }
 }
 
 // Utility Functions
@@ -260,3 +165,109 @@ function getTotalReceivable() {
 function getTotalRevenue() {
   return db.invoices.filter((i) => i.status === "paid").reduce((sum, inv) => sum + inv.amount, 0)
 }
+
+// Booking operations
+async function createBooking(bookingData) {
+  const response = await apiRequest("reservations.php", {
+    method: "POST",
+    body: {
+      user_id: bookingData.clientId,
+      vehicle_id: bookingData.vehicleId,
+      start_date: bookingData.pickupDate,
+      end_date: bookingData.returnDate,
+      pickup_location: bookingData.pickupLocation || "Main Branch",
+      dropoff_location: bookingData.dropoffLocation || "Main Branch",
+      total_amount: bookingData.totalAmount,
+      status: "pending",
+      notes: bookingData.notes,
+    },
+  })
+
+  if (response.success) {
+    await initializeStaffDB() // Refresh data
+  }
+  return response
+}
+
+async function updateBookingStatus(bookingId, status) {
+  const booking = db.bookings.find((b) => b.id === bookingId)
+  if (!booking) return { success: false, message: "Booking not found" }
+
+  const response = await apiRequest(`reservations.php?id=${booking.dbId}`, {
+    method: "PUT",
+    body: { status },
+  })
+
+  if (response.success) {
+    await initializeStaffDB()
+  }
+  return response
+}
+
+// Invoice operations
+async function createInvoice(invoiceData) {
+  const response = await apiRequest("invoices.php", {
+    method: "POST",
+    body: {
+      user_id: invoiceData.clientId,
+      reservation_id: invoiceData.bookingId,
+      amount: invoiceData.amount,
+      total_amount: invoiceData.amount,
+      due_date: invoiceData.dueDate,
+      status: "pending",
+    },
+  })
+
+  if (response.success) {
+    await initializeStaffDB()
+  }
+  return response
+}
+
+async function processPayment(invoiceId, paymentMethod) {
+  const invoice = db.invoices.find((i) => i.id === invoiceId)
+  if (!invoice) return { success: false, message: "Invoice not found" }
+
+  const response = await apiRequest(`invoices.php?id=${invoice.dbId}`, {
+    method: "PUT",
+    body: {
+      status: "paid",
+      payment_method: paymentMethod,
+    },
+  })
+
+  if (response.success) {
+    await initializeStaffDB()
+  }
+  return response
+}
+
+// Client verification
+async function verifyClient(clientId) {
+  const response = await apiRequest(`users.php?id=${clientId}`, {
+    method: "PUT",
+    body: { status: "active" },
+  })
+
+  if (response.success) {
+    await initializeStaffDB()
+  }
+  return response
+}
+
+async function rejectClient(clientId) {
+  const response = await apiRequest(`users.php?id=${clientId}`, {
+    method: "PUT",
+    body: { status: "inactive" },
+  })
+
+  if (response.success) {
+    await initializeStaffDB()
+  }
+  return response
+}
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", () => {
+  initializeStaffDB()
+})

@@ -1,556 +1,287 @@
-// MVRS Backend Database
-const db = {
-  vehicles: [
-    {
-      id: 1,
-      plate: "ABC-1234",
-      model: "Toyota Corolla",
-      type: "sedan",
-      year: 2022,
-      mileage: 15000,
-      status: "available",
-      dailyRate: 1500,
-      totalRentals: 45,
-    },
-    {
-      id: 2,
-      plate: "ABC-1235",
-      model: "Honda CR-V",
-      type: "suv",
-      year: 2023,
-      mileage: 8000,
-      status: "rented",
-      dailyRate: 2000,
-      totalRentals: 32,
-    },
-    {
-      id: 3,
-      plate: "ABC-1236",
-      model: "Toyota Innova",
-      type: "van",
-      year: 2022,
-      mileage: 22000,
-      status: "available",
-      dailyRate: 2500,
-      totalRentals: 68,
-    },
-    {
-      id: 4,
-      plate: "ABC-1237",
-      model: "Mitsubishi Montero",
-      type: "suv",
-      year: 2021,
-      mileage: 35000,
-      status: "maintenance",
-      dailyRate: 2200,
-      totalRentals: 55,
-    },
-    {
-      id: 5,
-      plate: "ABC-1238",
-      model: "Ford Ranger",
-      type: "truck",
-      year: 2022,
-      mileage: 12000,
-      status: "available",
-      dailyRate: 1800,
-      totalRentals: 28,
-    },
-    {
-      id: 6,
-      plate: "ABC-1239",
-      model: "BMW 3 Series",
-      type: "sports",
-      year: 2023,
-      mileage: 3000,
-      status: "rented",
-      dailyRate: 3500,
-      totalRentals: 15,
-    },
-  ],
+/**
+ * MVRS Driver Backend - PHP Database Integration
+ */
 
-  users: [
-    {
-      id: 1,
-      name: "John Smith",
-      email: "john@example.com",
-      phone: "09123456789",
-      role: "admin",
-      status: "active",
-      joined: "2023-01-15",
-    },
-    {
-      id: 2,
-      name: "Maria Garcia",
-      email: "maria@example.com",
-      phone: "09123456790",
-      role: "customer",
-      status: "active",
-      joined: "2023-02-20",
-    },
-    {
-      id: 3,
-      name: "Robert Martinez",
-      email: "robert@example.com",
-      phone: "09123456791",
-      role: "staff",
-      status: "active",
-      joined: "2023-03-10",
-    },
-    {
-      id: 4,
-      name: "Jennifer Lee",
-      email: "jennifer@example.com",
-      phone: "09123456792",
-      role: "customer",
-      status: "active",
-      joined: "2023-04-05",
-    },
-    {
-      id: 5,
-      name: "Michael Brown",
-      email: "michael@example.com",
-      phone: "09123456793",
-      role: "admin",
-      status: "active",
-      joined: "2023-01-01",
-    },
-    {
-      id: 6,
-      name: "Sarah Johnson",
-      email: "sarah@example.com",
-      phone: "09123456794",
-      role: "customer",
-      status: "inactive",
-      joined: "2022-12-25",
-    },
-  ],
+// API Configuration
+const API_BASE_URL = "../php/api"
 
-  reservations: [
-    {
-      id: "RES001",
-      userId: 2,
-      vehicleId: 1,
-      startDate: "2025-01-10",
-      endDate: "2025-01-15",
-      days: 5,
-      amount: 7500,
-      status: "active",
-    },
-    {
-      id: "RES002",
-      userId: 4,
-      vehicleId: 2,
-      startDate: "2025-01-08",
-      endDate: "2025-01-20",
-      days: 12,
-      amount: 24000,
-      status: "active",
-    },
-    {
-      id: "RES003",
-      userId: 2,
-      vehicleId: 3,
-      startDate: "2025-01-01",
-      endDate: "2025-01-08",
-      days: 7,
-      amount: 17500,
-      status: "completed",
-    },
-    {
-      id: "RES004",
-      userId: 4,
-      vehicleId: 5,
-      startDate: "2025-01-05",
-      endDate: "2025-01-07",
-      days: 2,
-      amount: 3600,
-      status: "completed",
-    },
-    {
-      id: "RES005",
-      userId: 2,
-      vehicleId: 6,
-      startDate: "2025-01-12",
-      endDate: "2025-01-18",
-      days: 6,
-      amount: 21000,
-      status: "pending",
-    },
-    {
-      id: "RES006",
-      userId: 4,
-      vehicleId: 1,
-      startDate: "2024-12-20",
-      endDate: "2024-12-27",
-      days: 7,
-      amount: 10500,
-      status: "completed",
-    },
-  ],
+// API Request Helper
+async function apiRequest(endpoint, options = {}) {
+  const url = `${API_BASE_URL}/${endpoint}`
 
-  pricing: [
-    { id: 1, tierName: "Economy", dailyRate: 1500, weeklyRate: 9000, monthlyRate: 35000 },
-    { id: 2, tierName: "Standard", dailyRate: 2000, weeklyRate: 12000, monthlyRate: 45000 },
-    { id: 3, tierName: "Premium", dailyRate: 3500, weeklyRate: 21000, monthlyRate: 80000 },
-  ],
+  const config = {
+    method: options.method || "GET",
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  }
 
-  billing: [
-    {
-      id: "INV001",
-      userId: 2,
-      amount: 7500,
-      date: "2025-01-15",
-      dueDate: "2025-01-20",
-      status: "paid",
-      paymentMethod: "card",
-    },
-    {
-      id: "INV002",
-      userId: 4,
-      amount: 24000,
-      date: "2025-01-08",
-      dueDate: "2025-01-15",
-      status: "paid",
-      paymentMethod: "transfer",
-    },
-    {
-      id: "INV003",
-      userId: 2,
-      amount: 17500,
-      date: "2025-01-08",
-      dueDate: "2025-01-15",
-      status: "paid",
-      paymentMethod: "cash",
-    },
-    {
-      id: "INV004",
-      userId: 4,
-      amount: 3600,
-      date: "2025-01-07",
-      dueDate: "2025-01-12",
-      status: "pending",
-      paymentMethod: "card",
-    },
-    {
-      id: "INV005",
-      userId: 2,
-      amount: 21000,
-      date: "2025-01-18",
-      dueDate: "2025-01-25",
-      status: "pending",
-      paymentMethod: "transfer",
-    },
-  ],
+  if (options.body) {
+    config.body = JSON.stringify(options.body)
+  }
 
-  vehicleHistory: [
-    { id: 1, vehicleId: 1, event: "Rental", description: "Rented to John Doe", date: "2025-01-10", type: "rental" },
-    {
-      id: 2,
-      vehicleId: 1,
-      event: "Return",
-      description: "Returned in good condition",
-      date: "2025-01-08",
-      type: "return",
-    },
-    {
-      id: 3,
-      vehicleId: 2,
-      event: "Maintenance",
-      description: "Oil change and filter replacement",
-      date: "2024-12-28",
-      type: "maintenance",
-    },
-    {
-      id: 4,
-      vehicleId: 2,
-      event: "Damage Report",
-      description: "Minor dent on right side",
-      date: "2024-12-22",
-      type: "damage",
-    },
-    { id: 5, vehicleId: 3, event: "Rental", description: "Rented to Jane Smith", date: "2025-01-01", type: "rental" },
-    {
-      id: 6,
-      vehicleId: 3,
-      event: "Inspection",
-      description: "Monthly safety inspection passed",
-      date: "2024-12-31",
-      type: "inspection",
-    },
-  ],
-
-  nextId: {
-    vehicles: 7,
-    users: 7,
-    reservations: 7,
-    pricing: 4,
-    billing: 6,
-    vehicleHistory: 7,
-  },
-}
-
-// Initialize data from localStorage
-function initializeDB() {
-  const savedData = localStorage.getItem("mvrsData")
-  if (savedData) {
-    const parsedData = JSON.parse(savedData)
-    Object.assign(db, parsedData)
-  } else {
-    saveDB()
+  try {
+    const response = await fetch(url, config)
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("API Error:", error)
+    return { success: false, message: error.message }
   }
 }
 
-// Save data to localStorage
-function saveDB() {
-  localStorage.setItem("mvrsData", JSON.stringify(db))
-}
+// Mock Database for Driver Interface (loaded from API)
+const driverDB = {
+  currentDriver: null,
+  drivers: {},
+  bookings: [],
+  vehicles: [],
+  checkInOutRecords: [],
+  issues: [],
 
-// VEHICLES CRUD
-const vehicleAPI = {
-  getAll() {
-    return db.vehicles
-  },
-  getById(id) {
-    return db.vehicles.find((v) => v.id === id)
-  },
-  add(vehicle) {
-    vehicle.id = db.nextId.vehicles++
-    db.vehicles.push(vehicle)
-    saveDB()
-    return vehicle
-  },
-  update(id, updates) {
-    const vehicle = db.vehicles.find((v) => v.id === id)
-    if (vehicle) {
-      Object.assign(vehicle, updates)
-      saveDB()
+  // Authentication Methods
+  async login(username, password, role) {
+    if (role !== "driver") {
+      return { success: false, error: "Invalid role" }
     }
-    return vehicle
-  },
-  delete(id) {
-    db.vehicles = db.vehicles.filter((v) => v.id !== id)
-    saveDB()
-  },
-  search(query) {
-    return db.vehicles.filter((v) => v.plate.toLowerCase().includes(query) || v.model.toLowerCase().includes(query))
-  },
-  filterByStatus(status) {
-    return status ? db.vehicles.filter((v) => v.status === status) : db.vehicles
-  },
-}
 
-// USERS CRUD
-const userAPI = {
-  getAll() {
-    return db.users
-  },
-  getById(id) {
-    return db.users.find((u) => u.id === id)
-  },
-  add(user) {
-    user.id = db.nextId.users++
-    user.joined = new Date().toISOString().split("T")[0]
-    db.users.push(user)
-    saveDB()
-    return user
-  },
-  update(id, updates) {
-    const user = db.users.find((u) => u.id === id)
-    if (user) {
-      Object.assign(user, updates)
-      saveDB()
+    const response = await apiRequest("auth.php?action=login", {
+      method: "POST",
+      body: { username, password, role: "driver" },
+    })
+
+    if (response.success) {
+      this.currentDriver = response.data
+      localStorage.setItem("mvrms_user", JSON.stringify(response.data))
+      return { success: true, driver: response.data }
     }
-    return user
-  },
-  delete(id) {
-    db.users = db.users.filter((u) => u.id !== id)
-    saveDB()
-  },
-  search(query) {
-    return db.users.filter((u) => u.name.toLowerCase().includes(query) || u.email.toLowerCase().includes(query))
-  },
-  filterByRole(role) {
-    return role ? db.users.filter((u) => u.role === role) : db.users
-  },
-}
 
-// RESERVATIONS CRUD
-const reservationAPI = {
-  getAll() {
-    return db.reservations
+    return { success: false, error: response.message || "Invalid credentials" }
   },
-  getById(id) {
-    return db.reservations.find((r) => r.id === id)
+
+  async logout() {
+    this.currentDriver = null
+    localStorage.removeItem("mvrms_user")
+    await apiRequest("auth.php?action=logout", { method: "POST" })
   },
-  add(reservation) {
-    const id = "RES" + String(db.nextId.reservations++).padStart(3, "0")
-    reservation.id = id
-    db.reservations.push(reservation)
-    saveDB()
-    return reservation
-  },
-  update(id, updates) {
-    const reservation = db.reservations.find((r) => r.id === id)
-    if (reservation) {
-      Object.assign(reservation, updates)
-      saveDB()
+
+  // Get Driver Methods
+  getCurrentDriver() {
+    if (!this.currentDriver) {
+      const stored = localStorage.getItem("mvrms_user")
+      if (stored) {
+        this.currentDriver = JSON.parse(stored)
+      }
     }
-    return reservation
+    return this.currentDriver
   },
-  delete(id) {
-    db.reservations = db.reservations.filter((r) => r.id !== id)
-    saveDB()
-  },
-  search(query) {
-    return db.reservations.filter((r) => r.id.toLowerCase().includes(query))
-  },
-  filterByStatus(status) {
-    return status ? db.reservations.filter((r) => r.status === status) : db.reservations
-  },
-}
 
-// PRICING CRUD
-const pricingAPI = {
-  getAll() {
-    return db.pricing
-  },
-  getById(id) {
-    return db.pricing.find((p) => p.id === id)
-  },
-  add(pricing) {
-    pricing.id = db.nextId.pricing++
-    db.pricing.push(pricing)
-    saveDB()
-    return pricing
-  },
-  update(id, updates) {
-    const pricing = db.pricing.find((p) => p.id === id)
-    if (pricing) {
-      Object.assign(pricing, updates)
-      saveDB()
+  async loadDriverData() {
+    const driver = this.getCurrentDriver()
+    if (!driver) return
+
+    // Load bookings assigned to this driver
+    const bookingsRes = await apiRequest(`reservations.php?driver_id=${driver.id}`)
+    if (bookingsRes.success) {
+      this.bookings = (bookingsRes.data || []).map((r) => ({
+        id: r.reservation_code,
+        dbId: r.id,
+        driverId: driver.id,
+        vehicleId: r.vehicle_id,
+        vehicleName: `${r.vehicle_plate} - ${r.vehicle_model}`,
+        clientName: r.user_name,
+        bookingDate: r.created_at?.split("T")[0],
+        startDate: r.start_date,
+        endDate: r.end_date,
+        status: r.status,
+        pickupLocation: r.pickup_location,
+        dropoffLocation: r.dropoff_location,
+        totalAmount: Number.parseFloat(r.total_amount),
+      }))
     }
-    return pricing
-  },
-  delete(id) {
-    db.pricing = db.pricing.filter((p) => p.id !== id)
-    saveDB()
-  },
-}
 
-// BILLING CRUD
-const billingAPI = {
-  getAll() {
-    return db.billing
-  },
-  getById(id) {
-    return db.billing.find((b) => b.id === id)
-  },
-  add(billing) {
-    const id = "INV" + String(db.nextId.billing++).padStart(3, "0")
-    billing.id = id
-    billing.date = new Date().toISOString().split("T")[0]
-    db.billing.push(billing)
-    saveDB()
-    return billing
-  },
-  update(id, updates) {
-    const billing = db.billing.find((b) => b.id === id)
-    if (billing) {
-      Object.assign(billing, updates)
-      saveDB()
+    // Load vehicles
+    const vehiclesRes = await apiRequest("vehicles.php")
+    if (vehiclesRes.success) {
+      this.vehicles = (vehiclesRes.data || []).map((v) => ({
+        id: v.id,
+        name: v.model,
+        type: v.type,
+        model: v.model,
+        year: v.year,
+        specs: v.specs,
+        dailyRate: Number.parseFloat(v.daily_rate),
+        availability: v.status,
+        plate: v.plate,
+      }))
     }
-    return billing
-  },
-  delete(id) {
-    db.billing = db.billing.filter((b) => b.id !== id)
-    saveDB()
-  },
-  search(query) {
-    return db.billing.filter((b) => b.id.toLowerCase().includes(query))
-  },
-  filterByStatus(status) {
-    return status ? db.billing.filter((b) => b.status === status) : db.billing
-  },
-}
 
-// VEHICLE HISTORY CRUD
-const vehicleHistoryAPI = {
-  getAll() {
-    return db.vehicleHistory
-  },
-  getByVehicleId(vehicleId) {
-    return db.vehicleHistory.filter((h) => h.vehicleId === vehicleId)
-  },
-  add(history) {
-    history.id = db.nextId.vehicleHistory++
-    history.date = new Date().toISOString().split("T")[0]
-    db.vehicleHistory.push(history)
-    saveDB()
-    return history
-  },
-}
+    // Load check records
+    const checkRes = await apiRequest("check-records.php")
+    if (checkRes.success) {
+      this.checkInOutRecords = (checkRes.data || []).map((c) => ({
+        id: c.record_code,
+        dbId: c.id,
+        bookingId: c.reservation_id,
+        vehicleId: c.vehicle_id,
+        type: c.type,
+        mileage: c.mileage,
+        fuel: c.fuel_level,
+        condition: c.vehicle_condition,
+        timestamp: c.recorded_at,
+      }))
+    }
 
-// ANALYTICS
-const analyticsAPI = {
-  getTotalVehicles() {
-    return db.vehicles.length
-  },
-  getTotalUsers() {
-    return db.users.length
-  },
-  getTotalReservations() {
-    return db.reservations.length
-  },
-  getActiveReservations() {
-    return db.reservations.filter((r) => r.status === "active").length
-  },
-  getCompletedReservations() {
-    return db.reservations.filter((r) => r.status === "completed").length
-  },
-  getPendingReservations() {
-    return db.reservations.filter((r) => r.status === "pending").length
-  },
-
-  getTotalRevenue() {
-    return db.billing.reduce((sum, b) => sum + (b.status === "paid" ? b.amount : 0), 0)
-  },
-
-  getMonthlyRevenue() {
-    const now = new Date()
-    const currentMonth = now.getMonth()
-    const currentYear = now.getFullYear()
-    return db.billing
-      .filter((b) => {
-        const date = new Date(b.date)
-        return date.getMonth() === currentMonth && date.getFullYear() === currentYear && b.status === "paid"
-      })
-      .reduce((sum, b) => sum + b.amount, 0)
-  },
-
-  getVehiclesByStatus(status) {
-    return db.vehicles.filter((v) => v.status === status).length
-  },
-
-  getAverageMileage() {
-    const total = db.vehicles.reduce((sum, v) => sum + v.mileage, 0)
-    return Math.round(total / db.vehicles.length)
-  },
-
-  getRevenueByPaymentMethod() {
-    return {
-      card: db.billing
-        .filter((b) => b.paymentMethod === "card" && b.status === "paid")
-        .reduce((sum, b) => sum + b.amount, 0),
-      cash: db.billing
-        .filter((b) => b.paymentMethod === "cash" && b.status === "paid")
-        .reduce((sum, b) => sum + b.amount, 0),
-      transfer: db.billing
-        .filter((b) => b.paymentMethod === "transfer" && b.status === "paid")
-        .reduce((sum, b) => sum + b.amount, 0),
+    // Load issues reported by this driver
+    const issuesRes = await apiRequest(`issues.php?reporter_id=${driver.id}`)
+    if (issuesRes.success) {
+      this.issues = (issuesRes.data || []).map((i) => ({
+        id: i.issue_code,
+        dbId: i.id,
+        driverId: i.reporter_id,
+        bookingId: i.reservation_id,
+        vehicleId: i.vehicle_id,
+        severity: i.severity,
+        category: i.category,
+        description: i.description,
+        location: i.location,
+        immediateAction: i.immediate_action,
+        status: i.status,
+        timestamp: i.created_at,
+      }))
     }
   },
+
+  getBookingsByDriver(driverId, status = null) {
+    let filtered = this.bookings.filter((b) => b.driverId == driverId)
+    if (status) {
+      filtered = filtered.filter((b) => b.status === status)
+    }
+    return filtered
+  },
+
+  getVehicleById(vehicleId) {
+    return this.vehicles.find((v) => v.id == vehicleId)
+  },
+
+  // Check In/Out Methods
+  async addCheckInOut(checkInOutData) {
+    const response = await apiRequest("check-records.php", {
+      method: "POST",
+      body: {
+        reservation_id: checkInOutData.bookingId,
+        vehicle_id: checkInOutData.vehicleId,
+        driver_id: this.currentDriver?.id,
+        type: checkInOutData.type,
+        mileage: checkInOutData.mileage,
+        fuel_level: checkInOutData.fuel,
+        vehicle_condition: checkInOutData.condition,
+      },
+    })
+
+    if (response.success) {
+      await this.loadDriverData()
+      return {
+        id: response.data.record_code,
+        ...checkInOutData,
+        timestamp: new Date().toLocaleString(),
+      }
+    }
+    return null
+  },
+
+  getCheckInOutRecords(vehicleId = null) {
+    if (vehicleId) {
+      return this.checkInOutRecords.filter((r) => r.vehicleId == vehicleId)
+    }
+    return this.checkInOutRecords
+  },
+
+  // Issue Reporting Methods
+  async reportIssue(issueData) {
+    const response = await apiRequest("issues.php", {
+      method: "POST",
+      body: {
+        reporter_id: this.currentDriver?.id || issueData.driverId,
+        vehicle_id: issueData.vehicleId,
+        reservation_id: issueData.bookingId,
+        severity: issueData.severity,
+        category: issueData.category,
+        description: issueData.description,
+        location: issueData.location,
+        immediate_action: issueData.immediateAction,
+      },
+    })
+
+    if (response.success) {
+      await this.loadDriverData()
+      return {
+        id: response.data.issue_code,
+        ...issueData,
+        status: "reported",
+        timestamp: new Date().toLocaleString(),
+      }
+    }
+    return null
+  },
+
+  getIssuesByDriver(driverId) {
+    return this.issues.filter((i) => i.driverId == driverId)
+  },
+
+  // Profile Update Method
+  async updateDriverProfile(driverId, updates) {
+    const response = await apiRequest(`users.php?id=${driverId}`, {
+      method: "PUT",
+      body: {
+        name: updates.fullname,
+        email: updates.email,
+        phone: updates.phone,
+        address: updates.address,
+        license_number: updates.licenseNumber,
+        license_expiry: updates.licenseExpiry,
+        license_type: updates.licenseType,
+        emergency_name: updates.emergencyName,
+        emergency_phone: updates.emergencyPhone,
+        emergency_relation: updates.emergencyRelation,
+      },
+    })
+
+    if (response.success) {
+      // Update local driver data
+      if (this.currentDriver) {
+        Object.assign(this.currentDriver, updates)
+        localStorage.setItem("mvrms_user", JSON.stringify(this.currentDriver))
+      }
+      return this.currentDriver
+    }
+    return null
+  },
+
+  // KPI Methods
+  getTodayBookingsCount(driverId) {
+    const today = new Date().toISOString().split("T")[0]
+    return this.bookings.filter((b) => b.driverId == driverId && b.bookingDate === today).length
+  },
+
+  getActiveBooking(driverId) {
+    return this.bookings.find((b) => b.driverId == driverId && b.status === "active")
+  },
+
+  getPendingCheckIns(driverId) {
+    const activeBooking = this.getActiveBooking(driverId)
+    if (!activeBooking) return 0
+    const checkIn = this.checkInOutRecords.find((r) => r.bookingId === activeBooking.dbId && r.type === "checkin")
+    return checkIn ? 0 : 1
+  },
 }
 
-// Initialize on load
-initializeDB()
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", async () => {
+  const driver = driverDB.getCurrentDriver()
+  if (driver) {
+    await driverDB.loadDriverData()
+  }
+  console.log("Driver backend initialized with PHP API")
+})

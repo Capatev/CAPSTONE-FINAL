@@ -1159,8 +1159,99 @@ body {
   flex-direction: column;
 }
 
-.form-group label 
-{
-  font -weight: 600;
-  margin-bottom: 5px;
+/* GRID */
+.vehicles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+    margin-top: 20px;
+}
+
+/* CARD */
+.vehicle-card {
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 32px rgba(0,0,0,0.15);
+}
+
+/* IMAGE */
+.vehicle-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background: #f3f4f6;
+}
+
+/* CONTENT */
+.vehicle-info {
+    padding: 15px;
+    flex: 1;
+}
+
+/* TITLE */
+.vehicle-info h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 6px;
+}
+
+/* SUBTEXT */
+.vehicle-info p {
+    font-size: 14px;
+    color: #4b5563;
+    margin: 3px 0;
+}
+
+/* PRICE */
+.vehicle-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #16a34a;
+    margin-top: 8px;
+}
+
+/* STATUS BADGE */
+.vehicle-status {
+    margin-top: 10px;
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.vehicle-status.available {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.vehicle-status.rented {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* BUTTON */
+.vehicle-card button {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.vehicle-card button:hover {
+    background: #1d4ed8;
 }
