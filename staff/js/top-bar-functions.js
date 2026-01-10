@@ -129,7 +129,8 @@ function changePassword(e) {
 function logout() {
   if (confirm("Are you sure you want to logout?")) {
     localStorage.removeItem("currentUser")
-    window.location.href = "../../pages/login.html?role=staff"
+    localStorage.removeItem("idVerification")
+    window.location.href = "/client/pages/login.html"
   }
 }
 

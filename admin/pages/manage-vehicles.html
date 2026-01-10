@@ -32,6 +32,10 @@
                     <span class="icon">💰</span>
                     <span>Pricing & Billing</span>
                 </a>
+                <a href="/admin/pages/payment-processing.html" class="menu-item">
+                    <span class="icon">💳</span>
+                    <span>Payment Processing</span>
+                </a>
                 <a href="/admin/pages/oversee-reservations.html" class="menu-item">
                     <span class="icon">📅</span>
                     <span>Oversee Reservations</span>
@@ -40,8 +44,16 @@
                     <span class="icon">📄</span>
                     <span>Vehicle Histories</span>
                 </a>
-                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
-                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">REPORTS</p>
+                <a href="/admin/pages/insurance-management.html" class="menu-item">
+                    <span class="icon">🛡️</span>
+                    <span>Insurance Management</span>
+                </a>
+                <a href="/admin/pages/renter-history.html" class="menu-item">
+                    <span class="icon">👤</span>
+                    <span>Renter History</span>
+                </a>
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.5); padding: 0 15px; margin-bottom: 10px;">REPORTS</p>
                     <a href="/admin/pages/generate-reports.html" class="menu-item">
                         <span class="icon">📈</span>
                         <span>Generate Reports</span>
@@ -87,6 +99,14 @@
                             <option value="maintenance">Maintenance</option>
                             <option value="damaged">Damaged</option>
                         </select>
+                        <!-- Added acquisition origin filter -->
+                        <select id="filterAcquisition" class="filter-select">
+                            <option value="">All Origins</option>
+                            <option value="brand-new">Brand New</option>
+                            <option value="pawn">Pawn/Repossessed</option>
+                            <option value="second-hand">Second Hand</option>
+                            <option value="auction">Auction</option>
+                        </select>
                     </div>
                     <button class="btn btn-primary" onclick="openAddVehicleModal()">+ Add Vehicle</button>
                 </div>
@@ -99,6 +119,8 @@
                             <th>Type</th>
                             <th>Year</th>
                             <th>Mileage</th>
+                            <!-- Added acquisition origin column -->
+                            <th>Acquisition</th>
                             <th>Status</th>
                             <th>Daily Rate</th>
                             <th>Actions</th>
@@ -106,7 +128,7 @@
                     </thead>
                     <tbody id="vehiclesTableBody">
                         <tr>
-                            <td colspan="8" style="text-align: center; padding: 20px;">Loading vehicles...</td>
+                            <td colspan="9" style="text-align: center; padding: 20px;">Loading vehicles...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -114,9 +136,9 @@
         </main>
     </div>
 
-    <!-- Add/Edit Vehicle Modal -->
+    <!-- Add/Edit Vehicle Modal - Enhanced with acquisition fields -->
     <div id="vehicleModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
                 <h2 id="modalTitle">Add Vehicle</h2>
                 <button class="close-btn" onclick="closeVehicleModal()">&times;</button>
@@ -142,16 +164,17 @@
                             <option value="truck">Truck</option>
                             <option value="van">Van</option>
                             <option value="sports">Sports</option>
+                            <option value="motorcycle">Motorcycle</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Year *</label>
-                        <input type="number" id="vehicleYear" required>
+                        <input type="number" id="vehicleYear" min="1990" max="2030" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Mileage *</label>
+                        <label>Mileage (km) *</label>
                         <input type="number" id="vehicleMileage" required>
                     </div>
                     <div class="form-group">
@@ -168,6 +191,45 @@
                             <option value="maintenance">Maintenance</option>
                             <option value="damaged">Damaged</option>
                         </select>
+                    </div>
+                    <!-- Added acquisition origin field -->
+                    <div class="form-group">
+                        <label>Acquisition Origin *</label>
+                        <select id="vehicleAcquisition" required>
+                            <option value="">Select Origin</option>
+                            <option value="brand-new">Brand New (Dealership)</option>
+                            <option value="pawn">Pawn/Repossessed</option>
+                            <option value="second-hand">Second Hand Purchase</option>
+                            <option value="auction">Government/Bank Auction</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Added acquisition details section -->
+                <div style="border-top: 1px solid #e5e7eb; margin: 20px 0; padding-top: 20px;">
+                    <h3 style="font-size: 16px; margin-bottom: 16px; color: #374151;">Acquisition Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Acquisition Date *</label>
+                            <input type="date" id="vehicleAcquisitionDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Acquisition Cost (₱) *</label>
+                            <input type="number" id="vehicleAcquisitionCost" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Source/Seller</label>
+                            <input type="text" id="vehicleSource" placeholder="e.g., Toyota Dealership, Bank XYZ">
+                        </div>
+                        <div class="form-group">
+                            <label>Original Owner (if pawn/second-hand)</label>
+                            <input type="text" id="vehicleOriginalOwner" placeholder="Previous owner name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Acquisition Notes</label>
+                        <textarea id="vehicleAcquisitionNotes" rows="3" placeholder="Additional details about vehicle acquisition..."></textarea>
                     </div>
                 </div>
                 <div class="form-actions">

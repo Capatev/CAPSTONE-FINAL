@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renter History - MVRS Admin</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">ADMIN</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/admin/admin.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/pages/manage-vehicles.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Manage Vehicles</span>
+                </a>
+                <a href="/admin/pages/manage-users.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    <span>Manage Users</span>
+                </a>
+                <a href="/admin/pages/pricing-billing.html" class="menu-item">
+                    <span class="icon">💰</span>
+                    <span>Pricing & Billing</span>
+                </a>
+                <a href="/admin/pages/payment-processing.html" class="menu-item">
+                    <span class="icon">💳</span>
+                    <span>Payment Processing</span>
+                </a>
+                <a href="/admin/pages/oversee-reservations.html" class="menu-item">
+                    <span class="icon">📅</span>
+                    <span>Oversee Reservations</span>
+                </a>
+                <a href="/admin/pages/vehicle-histories.html" class="menu-item">
+                    <span class="icon">📄</span>
+                    <span>Vehicle Histories</span>
+                </a>
+                <a href="/admin/pages/insurance-management.html" class="menu-item">
+                    <span class="icon">🛡️</span>
+                    <span>Insurance Management</span>
+                </a>
+                <a href="/admin/pages/renter-history.html" class="menu-item active">
+                    <span class="icon">👤</span>
+                    <span>Renter History</span>
+                </a>
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.5); padding: 0 15px; margin-bottom: 10px;">REPORTS</p>
+                    <a href="/admin/pages/generate-reports.html" class="menu-item">
+                        <span class="icon">📈</span>
+                        <span>Generate Reports</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Comprehensive Renter History</h1>
+                <div class="user-info">
+                    <span class="username">uep-mainadmin</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Total Renters</h3>
+                        </div>
+                        <div class="kpi-value" id="totalRenters">0</div>
+                        <p class="kpi-label">Registered Customers</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Active Renters</h3>
+                        </div>
+                        <div class="kpi-value" id="activeRenters">0</div>
+                        <p class="kpi-label">Currently Renting</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Blacklisted</h3>
+                            <span class="trend negative">!</span>
+                        </div>
+                        <div class="kpi-value" id="blacklistedRenters">0</div>
+                        <p class="kpi-label">Flagged Accounts</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Total Lifetime Value</h3>
+                        </div>
+                        <div class="kpi-value" id="totalLifetimeValue">₱0</div>
+                        <p class="kpi-label">All Customers</p>
+                    </div>
+                </div>
+
+                <!-- Renter List Section -->
+                <div class="section" style="margin-bottom: 30px;">
+                    <div class="section-header">
+                        <h2>All Renters</h2>
+                        <button class="btn btn-primary" onclick="exportRenterData()">Export Data</button>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchRenters" placeholder="Search by name, email, or phone..." class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterRenterStatus" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="blacklisted">Blacklisted</option>
+                            </select>
+                            <select id="filterRenterRating" class="filter-select">
+                                <option value="">All Ratings</option>
+                                <option value="excellent">Excellent (5)</option>
+                                <option value="good">Good (4+)</option>
+                                <option value="average">Average (3+)</option>
+                                <option value="poor">Poor (Below 3)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Renter ID</th>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Total Rentals</th>
+                                <th>Total Spent</th>
+                                <th>Rating</th>
+                                <th>ID Verified</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rentersTableBody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 20px;">Loading renters...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Renter Details Panel (shown when viewing a renter) -->
+                <div id="renterDetailsPanel" class="section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Renter Profile: <span id="renterDetailName"></span></h2>
+                        <button class="btn btn-secondary" onclick="closeRenterDetails()">Close</button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <!-- Personal Information -->
+                        <div>
+                            <h3 style="margin-bottom: 16px; color: #374151;">Personal Information</h3>
+                            <div id="renterPersonalInfo"></div>
+                        </div>
+
+                        <!-- Rental Statistics -->
+                        <div>
+                            <h3 style="margin-bottom: 16px; color: #374151;">Rental Statistics</h3>
+                            <div id="renterStats"></div>
+                        </div>
+                    </div>
+
+                    <!-- Rental History Timeline -->
+                    <div style="margin-top: 30px;">
+                        <h3 style="margin-bottom: 16px; color: #374151;">Rental History</h3>
+                        <div id="renterRentalHistory" class="timeline"></div>
+                    </div>
+
+                    <!-- Incidents & Notes -->
+                    <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h3 style="margin-bottom: 16px; color: #374151;">Incidents & Violations</h3>
+                            <div id="renterIncidents"></div>
+                        </div>
+                        <div>
+                            <h3 style="margin-bottom: 16px; color: #374151;">Admin Notes</h3>
+                            <div id="renterNotes"></div>
+                            <div style="margin-top: 16px;">
+                                <textarea id="newRenterNote" rows="3" placeholder="Add a note..." style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;"></textarea>
+                                <button class="btn btn-primary" style="margin-top: 8px;" onclick="addRenterNote()">Add Note</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Blacklist Modal -->
+    <div id="blacklistModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Blacklist Renter</h2>
+                <button class="close-btn" onclick="closeBlacklistModal()">&times;</button>
+            </div>
+            <form id="blacklistForm" onsubmit="confirmBlacklist(event)">
+                <div class="form-group">
+                    <label>Renter: <strong id="blacklistRenterName"></strong></label>
+                </div>
+                <div class="form-group">
+                    <label>Reason for Blacklisting *</label>
+                    <select id="blacklistReason" required>
+                        <option value="">Select Reason</option>
+                        <option value="non-payment">Non-Payment</option>
+                        <option value="vehicle-damage">Vehicle Damage</option>
+                        <option value="fraud">Fraud/False Information</option>
+                        <option value="violation">Terms Violation</option>
+                        <option value="theft">Vehicle Theft Attempt</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Additional Details *</label>
+                    <textarea id="blacklistDetails" rows="4" placeholder="Provide detailed explanation..." required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeBlacklistModal()">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm Blacklist</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="/admin/js/backend.js"></script>
+    <script src="/admin/js/shared-script.js"></script>
+    <script src="/admin/js/renter-history.js"></script>
+</body>
+</html>

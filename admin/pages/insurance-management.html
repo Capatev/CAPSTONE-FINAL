@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Management - MVRS Admin</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">ADMIN</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/admin/admin.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/pages/manage-vehicles.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Manage Vehicles</span>
+                </a>
+                <a href="/admin/pages/manage-users.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    <span>Manage Users</span>
+                </a>
+                <a href="/admin/pages/pricing-billing.html" class="menu-item">
+                    <span class="icon">💰</span>
+                    <span>Pricing & Billing</span>
+                </a>
+                <a href="/admin/pages/payment-processing.html" class="menu-item">
+                    <span class="icon">💳</span>
+                    <span>Payment Processing</span>
+                </a>
+                <a href="/admin/pages/oversee-reservations.html" class="menu-item">
+                    <span class="icon">📅</span>
+                    <span>Oversee Reservations</span>
+                </a>
+                <a href="/admin/pages/vehicle-histories.html" class="menu-item">
+                    <span class="icon">📄</span>
+                    <span>Vehicle Histories</span>
+                </a>
+                <a href="/admin/pages/insurance-management.html" class="menu-item active">
+                    <span class="icon">🛡️</span>
+                    <span>Insurance Management</span>
+                </a>
+                <a href="/admin/pages/renter-history.html" class="menu-item">
+                    <span class="icon">👤</span>
+                    <span>Renter History</span>
+                </a>
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.5); padding: 0 15px; margin-bottom: 10px;">REPORTS</p>
+                    <a href="/admin/pages/generate-reports.html" class="menu-item">
+                        <span class="icon">📈</span>
+                        <span>Generate Reports</span>
+                    </a>
+                    <a href="/admin/pages/vehicle-report.html" class="menu-item">
+                        <span class="icon">🚗</span>
+                        <span>Vehicle Report</span>
+                    </a>
+                    <a href="/admin/pages/revenue-report.html" class="menu-item">
+                        <span class="icon">💵</span>
+                        <span>Revenue Report</span>
+                    </a>
+                    <a href="/admin/pages/booking-report.html" class="menu-item">
+                        <span class="icon">📋</span>
+                        <span>Booking Report</span>
+                    </a>
+                </div>
+            </nav>
+
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Insurance Management</h1>
+                <div class="user-info">
+                    <span class="username">uep-mainadmin</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Insurance KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Total Policies</h3>
+                        </div>
+                        <div class="kpi-value" id="totalPolicies">0</div>
+                        <p class="kpi-label">Active Insurance Policies</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Expiring Soon</h3>
+                            <span class="trend negative">!</span>
+                        </div>
+                        <div class="kpi-value" id="expiringSoon">0</div>
+                        <p class="kpi-label">Within 30 Days</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Active Claims</h3>
+                        </div>
+                        <div class="kpi-value" id="activeClaims">0</div>
+                        <p class="kpi-label">Pending Resolution</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Total Coverage</h3>
+                        </div>
+                        <div class="kpi-value" id="totalCoverage">₱0</div>
+                        <p class="kpi-label">All Vehicles</p>
+                    </div>
+                </div>
+
+                <!-- Insurance Policies Section -->
+                <div class="section" style="margin-bottom: 30px;">
+                    <div class="section-header">
+                        <h2>Vehicle Insurance Policies</h2>
+                        <button class="btn btn-primary" onclick="openAddPolicyModal()">+ Add Policy</button>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchPolicies" placeholder="Search policies..." class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterPolicyStatus" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="expired">Expired</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                            <select id="filterInsuranceType" class="filter-select">
+                                <option value="">All Types</option>
+                                <option value="comprehensive">Comprehensive</option>
+                                <option value="third-party">Third Party</option>
+                                <option value="collision">Collision</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Policy ID</th>
+                                <th>Vehicle</th>
+                                <th>Provider</th>
+                                <th>Type</th>
+                                <th>Coverage</th>
+                                <th>Premium</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="policiesTableBody">
+                            <tr>
+                                <td colspan="10" style="text-align: center; padding: 20px;">Loading policies...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Insurance Claims Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Insurance Claims</h2>
+                        <button class="btn btn-primary" onclick="openAddClaimModal()">+ File Claim</button>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchClaims" placeholder="Search claims..." class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterClaimStatus" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="settled">Settled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Claim ID</th>
+                                <th>Policy</th>
+                                <th>Vehicle</th>
+                                <th>Incident Date</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="claimsTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 20px;">Loading claims...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Policy Modal -->
+    <div id="policyModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="policyModalTitle">Add Insurance Policy</h2>
+                <button class="close-btn" onclick="closePolicyModal()">&times;</button>
+            </div>
+            <form id="policyForm" onsubmit="savePolicy(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Vehicle *</label>
+                        <select id="policyVehicle" required>
+                            <option value="">Select Vehicle</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Insurance Provider *</label>
+                        <input type="text" id="policyProvider" placeholder="e.g., Standard Insurance" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Policy Number *</label>
+                        <input type="text" id="policyNumber" placeholder="e.g., POL-2025-001" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Insurance Type *</label>
+                        <select id="policyType" required>
+                            <option value="">Select Type</option>
+                            <option value="comprehensive">Comprehensive</option>
+                            <option value="third-party">Third Party Liability</option>
+                            <option value="collision">Collision</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Coverage Amount (₱) *</label>
+                        <input type="number" id="policyCoverage" step="0.01" placeholder="500000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Annual Premium (₱) *</label>
+                        <input type="number" id="policyPremium" step="0.01" placeholder="15000" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Date *</label>
+                        <input type="date" id="policyStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date *</label>
+                        <input type="date" id="policyEndDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Deductible (₱)</label>
+                        <input type="number" id="policyDeductible" step="0.01" placeholder="5000">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="policyStatus">
+                            <option value="active">Active</option>
+                            <option value="pending">Pending</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="policyNotes" rows="3" placeholder="Additional notes..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closePolicyModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Policy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Claim Modal -->
+    <div id="claimModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="claimModalTitle">File Insurance Claim</h2>
+                <button class="close-btn" onclick="closeClaimModal()">&times;</button>
+            </div>
+            <form id="claimForm" onsubmit="saveClaim(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Policy *</label>
+                        <select id="claimPolicy" required onchange="updateClaimVehicle()">
+                            <option value="">Select Policy</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Vehicle</label>
+                        <input type="text" id="claimVehicle" readonly placeholder="Auto-filled from policy">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Incident Date *</label>
+                        <input type="date" id="claimIncidentDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Claim Type *</label>
+                        <select id="claimType" required>
+                            <option value="">Select Type</option>
+                            <option value="accident">Accident</option>
+                            <option value="theft">Theft</option>
+                            <option value="vandalism">Vandalism</option>
+                            <option value="natural-disaster">Natural Disaster</option>
+                            <option value="fire">Fire</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Claim Amount (₱) *</label>
+                        <input type="number" id="claimAmount" step="0.01" placeholder="Estimated damage cost" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="claimStatus">
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="settled">Settled</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Incident Description *</label>
+                    <textarea id="claimDescription" rows="4" placeholder="Describe the incident in detail..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Police Report Number (if applicable)</label>
+                    <input type="text" id="claimPoliceReport" placeholder="e.g., PR-2025-001234">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeClaimModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Claim</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Policy Details Modal -->
+    <div id="policyDetailsModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Policy Details</h2>
+                <button class="close-btn" onclick="closePolicyDetailsModal()">&times;</button>
+            </div>
+            <div id="policyDetailsContent" style="padding: 24px;"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="/admin/js/backend.js"></script>
+    <script src="/admin/js/shared-script.js"></script>
+    <script src="/admin/js/insurance-management.js"></script>
+</body>
+</html>

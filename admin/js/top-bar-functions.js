@@ -129,7 +129,8 @@ function changePassword(e) {
 function logout() {
   if (confirm("Are you sure you want to logout?")) {
     localStorage.removeItem("currentUser")
-    window.location.href = "../../pages/login.html"
+    localStorage.removeItem("idVerification")
+    window.location.href = "/client/pages/login.html"
   }
 }
 
@@ -137,16 +138,24 @@ function logout() {
 function loadUserData() {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"))
   if (currentUser) {
-    const username = document.querySelector(".username")
+    const username = document.getElementById("currentUsername")
+    const profileUsername = document.querySelector("#profileUsername")
+    const profileName = document.querySelector("#profileName")
+
     if (username) {
       username.textContent = currentUser.username
+    }
+    if (profileUsername) {
+      profileUsername.textContent = currentUser.username
+    }
+    if (profileName) {
+      profileName.textContent = currentUser.fullName || "Client User"
     }
   }
 }
 
 // Load Notifications
 function loadNotifications() {
-  // This can be extended to load from backend/localStorage
   const notificationBadge = document.getElementById("notificationBadge")
   if (notificationBadge) {
     notificationBadge.textContent = notificationBadge.textContent || "0"

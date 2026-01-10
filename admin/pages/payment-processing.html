@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Processing - MVRS Admin</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🚗 MVRS</div>
+                <p class="logo-text">ADMIN</p>
+            </div>
+
+            <nav class="menu">
+                <a href="/admin/admin.html" class="menu-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/pages/manage-vehicles.html" class="menu-item">
+                    <span class="icon">🚙</span>
+                    <span>Manage Vehicles</span>
+                </a>
+                <a href="/admin/pages/manage-users.html" class="menu-item">
+                    <span class="icon">👥</span>
+                    <span>Manage Users</span>
+                </a>
+                <a href="/admin/pages/pricing-billing.html" class="menu-item">
+                    <span class="icon">💰</span>
+                    <span>Pricing & Billing</span>
+                </a>
+                <a href="/admin/pages/payment-processing.html" class="menu-item active">
+                    <span class="icon">💳</span>
+                    <span>Payment Processing</span>
+                </a>
+                <a href="/admin/pages/oversee-reservations.html" class="menu-item">
+                    <span class="icon">📅</span>
+                    <span>Oversee Reservations</span>
+                </a>
+                <a href="/admin/pages/vehicle-histories.html" class="menu-item">
+                    <span class="icon">📄</span>
+                    <span>Vehicle Histories</span>
+                </a>
+                <a href="/admin/pages/insurance-management.html" class="menu-item">
+                    <span class="icon">🛡️</span>
+                    <span>Insurance Management</span>
+                </a>
+                <a href="/admin/pages/renter-history.html" class="menu-item">
+                    <span class="icon">👤</span>
+                    <span>Renter History</span>
+                </a>
+                <div style="border-top: 1px solid #ddd; margin: 20px 0; padding-top: 20px;">
+                    <p style="font-size: 12px; color: #888; padding: 0 15px; margin-bottom: 10px;">REPORTS</p>
+                    <a href="/admin/pages/generate-reports.html" class="menu-item">
+                        <span class="icon">📈</span>
+                        <span>Generate Reports</span>
+                    </a>
+                    <a href="/admin/pages/vehicle-report.html" class="menu-item">
+                        <span class="icon">🚗</span>
+                        <span>Vehicle Report</span>
+                    </a>
+                    <a href="/admin/pages/revenue-report.html" class="menu-item">
+                        <span class="icon">💵</span>
+                        <span>Revenue Report</span>
+                    </a>
+                    <a href="/admin/pages/booking-report.html" class="menu-item">
+                        <span class="icon">📋</span>
+                        <span>Booking Report</span>
+                    </a>
+            </nav>
+
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Secure Payment Processing</h1>
+                <div class="user-info">
+                    <span class="username">uep-mainadmin</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Payment KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Today's Collections</h3>
+                        </div>
+                        <div class="kpi-value" id="todayCollections">₱0</div>
+                        <p class="kpi-label">Processed Today</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Pending Payments</h3>
+                            <span class="trend negative">!</span>
+                        </div>
+                        <div class="kpi-value" id="pendingPayments">0</div>
+                        <p class="kpi-label">Awaiting Processing</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Total Processed</h3>
+                        </div>
+                        <div class="kpi-value" id="totalProcessed">₱0</div>
+                        <p class="kpi-label">This Month</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <h3>Failed Transactions</h3>
+                        </div>
+                        <div class="kpi-value" id="failedTransactions">0</div>
+                        <p class="kpi-label">Requires Attention</p>
+                    </div>
+                </div>
+
+                <!-- Payment Methods Configuration -->
+                <div class="section" style="margin-bottom: 30px;">
+                    <div class="section-header">
+                        <h2>Payment Methods</h2>
+                    </div>
+                    <div class="pricing-grid" id="paymentMethodsGrid">
+                        <!-- GCash -->
+                        <div class="pricing-card">
+                            <h3>GCash</h3>
+                            <div style="font-size: 48px; margin: 20px 0;">📱</div>
+                            <div id="gcashStatus" class="badge badge-success">Active</div>
+                            <div class="pricing-features">
+                                <p><strong>Account:</strong> 0917****789</p>
+                                <p><strong>Transactions:</strong> <span id="gcashTransactions">0</span></p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="configurePaymentMethod('gcash')">Configure</button>
+                        </div>
+
+                        <!-- Bank Transfer -->
+                        <div class="pricing-card">
+                            <h3>Bank Transfer</h3>
+                            <div style="font-size: 48px; margin: 20px 0;">🏦</div>
+                            <div id="bankStatus" class="badge badge-success">Active</div>
+                            <div class="pricing-features">
+                                <p><strong>Bank:</strong> BDO</p>
+                                <p><strong>Transactions:</strong> <span id="bankTransactions">0</span></p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="configurePaymentMethod('bank')">Configure</button>
+                        </div>
+
+                        <!-- Cash -->
+                        <div class="pricing-card">
+                            <h3>Cash Payment</h3>
+                            <div style="font-size: 48px; margin: 20px 0;">💵</div>
+                            <div id="cashStatus" class="badge badge-success">Active</div>
+                            <div class="pricing-features">
+                                <p><strong>Type:</strong> In-Person</p>
+                                <p><strong>Transactions:</strong> <span id="cashTransactions">0</span></p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="configurePaymentMethod('cash')">Configure</button>
+                        </div>
+
+                        <!-- Credit/Debit Card -->
+                        <div class="pricing-card">
+                            <h3>Card Payment</h3>
+                            <div style="font-size: 48px; margin: 20px 0;">💳</div>
+                            <div id="cardStatus" class="badge badge-warning">Setup Required</div>
+                            <div class="pricing-features">
+                                <p><strong>Gateway:</strong> Not Configured</p>
+                                <p><strong>Transactions:</strong> <span id="cardTransactions">0</span></p>
+                            </div>
+                            <button class="btn btn-primary" onclick="configurePaymentMethod('card')">Setup</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Process Payment Section -->
+                <div class="section" style="margin-bottom: 30px;">
+                    <div class="section-header">
+                        <h2>Process Payment</h2>
+                    </div>
+                    <form id="processPaymentForm" onsubmit="processNewPayment(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Select Booking/Invoice *</label>
+                                <select id="paymentBooking" required onchange="updatePaymentAmount()">
+                                    <option value="">Select pending payment...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount (₱)</label>
+                                <input type="number" id="paymentAmount" step="0.01" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Payment Method *</label>
+                                <select id="paymentMethod" required>
+                                    <option value="">Select method...</option>
+                                    <option value="gcash">GCash</option>
+                                    <option value="bank">Bank Transfer</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="card">Credit/Debit Card</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Reference Number</label>
+                                <input type="text" id="paymentReference" placeholder="Transaction reference (auto-generated if empty)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea id="paymentNotes" rows="2" placeholder="Additional payment notes..."></textarea>
+                        </div>
+                        <div class="form-actions" style="justify-content: flex-start;">
+                            <button type="submit" class="btn btn-success">Process Payment</button>
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('processPaymentForm').reset()">Clear</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Transaction History</h2>
+                        <button class="btn btn-primary" onclick="exportTransactions()">Export</button>
+                    </div>
+
+                    <div class="header-actions">
+                        <div class="search-bar">
+                            <input type="text" id="searchTransactions" placeholder="Search transactions..." class="search-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterTransactionStatus" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="completed">Completed</option>
+                                <option value="pending">Pending</option>
+                                <option value="failed">Failed</option>
+                                <option value="refunded">Refunded</option>
+                            </select>
+                            <select id="filterTransactionMethod" class="filter-select">
+                                <option value="">All Methods</option>
+                                <option value="gcash">GCash</option>
+                                <option value="bank">Bank Transfer</option>
+                                <option value="cash">Cash</option>
+                                <option value="card">Card</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Date/Time</th>
+                                <th>Customer</th>
+                                <th>Booking</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Reference</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 20px;">Loading transactions...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Payment Method Configuration Modal -->
+    <div id="configModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="configModalTitle">Configure Payment Method</h2>
+                <button class="close-btn" onclick="closeConfigModal()">&times;</button>
+            </div>
+            <form id="configForm" onsubmit="savePaymentConfig(event)">
+                <div id="configFormFields"></div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeConfigModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Configuration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Transaction Details Modal -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Transaction Details</h2>
+                <button class="close-btn" onclick="closeTransactionModal()">&times;</button>
+            </div>
+            <div id="transactionDetails" style="padding: 24px;"></div>
+            <div class="form-actions" style="padding: 0 24px 24px;">
+                <button class="btn btn-secondary" onclick="closeTransactionModal()">Close</button>
+                <button class="btn btn-warning" id="refundBtn" onclick="initiateRefund()">Refund</button>
+                <button class="btn btn-primary" onclick="printReceipt()">Print Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Motor Vehicle Rental Management System. All rights reserved.</p>
+    </footer>
+
+    <script src="/admin/js/backend.js"></script>
+    <script src="/admin/js/shared-script.js"></script>
+    <script src="/admin/js/payment-processing.js"></script>
+</body>
+</html>

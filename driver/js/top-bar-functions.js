@@ -129,7 +129,8 @@ function changePassword(e) {
 function logout() {
   if (confirm("Are you sure you want to logout?")) {
     localStorage.removeItem("currentUser")
-    window.location.href = "../../pages/login.html?role=driver"
+    localStorage.removeItem("idVerification")
+    window.location.href = "/client/pages/login.html"
   }
 }
 
@@ -138,11 +139,7 @@ function loadUserData() {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"))
   if (currentUser) {
     const profileUsername = document.querySelector("#profileUsername")
-    const driverName = document.querySelector("#driverName")
 
-    if (driverName) {
-      driverName.textContent = currentUser.username
-    }
     if (profileUsername) {
       profileUsername.textContent = currentUser.username
     }
