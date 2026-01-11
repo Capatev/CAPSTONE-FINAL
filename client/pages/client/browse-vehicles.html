@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,117 +8,155 @@
     <link rel="stylesheet" href="/MVRMS/client/css/client.css">
     <link rel="icon" type="image/png" href="/MVRMS/client/images/logo.png">
 </head>
+
 <body>
-<div class="dashboard-layout">
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <img src="/MVRMS/client/images/logo.png" class="sidebar-logo">
-            <h2>MVRMS</h2>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="/MVRMS/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
-            <a href="/MVRMS/client/pages/client/browse-vehicles.html" class="nav-item active">Browse Vehicles</a>
-            <a href="/MVRMS/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
-            <a href="/MVRMS/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
-            <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
-            <a href="/MVRMS/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
-            <a href="/MVRMS/client/pages/client/profile.html" class="nav-item">Profile</a>
-            <a href="/MVRMS/client/pages/login.html" class="nav-item logout">Logout</a>
-        </nav>
-    </aside>
-
-    <main class="main-content">
-        <header class="top-bar">
-            <div class="search-bar">
-                <input type="text" placeholder="Search vehicles...">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/MVRMS/client/images/logo.png" class="sidebar-logo">
+                <h2>MVRMS</h2>
             </div>
-        </header>
+            <nav class="sidebar-nav">
+                <a href="/MVRMS/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
+                <a href="/MVRMS/client/pages/client/browse-vehicles.html" class="nav-item active">Browse Vehicles</a>
+                <a href="/MVRMS/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
+                <a href="/MVRMS/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
+                <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
+                <a href="/MVRMS/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
+                <a href="/MVRMS/client/pages/client/profile.html" class="nav-item">Profile</a>
+                <a href="/MVRMS/client/pages/login.html" class="nav-item logout">Logout</a>
+            </nav>
+        </aside>
 
-        <div class="page-content">
-            <h1>Browse Vehicles</h1>
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search vehicles...">
+                </div>
+            </header>
 
-            <!-- FILTERS -->
-            <div class="filter-section">
-                <div class="filter-group">
-                    <label>Type</label>
-                    <select>
-                        <option>All</option>
-                        <option>Motor</option>
-                        <option>Car</option>
-                    </select>
+            <div class="page-content">
+                <h1>Browse Vehicles</h1>
+
+                <!-- FILTERS -->
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label>Type</label>
+                        <select id="typeFilter">
+                            <option value="all">All</option>
+                            <option value="Motorcycle">Motor</option>
+                            <option value="Car">Car</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Max Price</label>
+                        <select id="priceFilter">
+                            <option value="all">All</option>
+                            <option value="1000">₱1000</option>
+                            <option value="2000">₱2000</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Availability</label>
+                        <select id="statusFilter">
+                            <option value="all">All</option>
+                            <option value="Available">Available</option>
+                            <option value="Rented">Rented</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="filter-group">
-                    <label>Max Price</label>
-                    <select>
-                        <option>All</option>
-                        <option>₱1000</option>
-                        <option>₱2000</option>
-                    </select>
+
+                <input type="text" id="searchInput" placeholder="Search vehicles...">
+
+
+                <!-- ✅ CONTAINER NA GINAGAMIT NG JS -->
+                <div id="vehiclesGrid" class="vehicle-card">
                 </div>
-                <div class="filter-group">
-                    <label>Availability</label>
-                    <select>
-                        <option>All</option>
-                        <option>Available</option>
-                        <option>Rented</option>
-                    </select>
-                </div>
+
             </div>
+        </main>
+    </div>
+    <script>
+        let allVehicles = [];
 
-            <!-- ✅ CONTAINER NA GINAGAMIT NG JS -->
-            <div id="vehiclesGrid"></div>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch("/MVRMS/api/get-available-vehicles.php")
+                .then(res => res.json())
+                .then(data => {
+                    allVehicles = data;
+                    renderVehicles(allVehicles);
+                })
+                .catch(err => console.error(err));
 
-        </div>
-    </main>
-</div>
+            document.getElementById("typeFilter").addEventListener("change", applyFilters);
+            document.getElementById("priceFilter").addEventListener("change", applyFilters);
+            document.getElementById("statusFilter").addEventListener("change", applyFilters);
+            document.getElementById("searchInput").addEventListener("input", applyFilters);
+        });
 
-<script>
-/* ================= LOAD & RENDER VEHICLES ================= */
-function renderVehicles(vehicles) {
-    const grid = document.getElementById("vehiclesGrid");
-    grid.innerHTML = "";
+        function applyFilters() {
+            const type = document.getElementById("typeFilter").value;
+            const price = document.getElementById("priceFilter").value;
+            const status = document.getElementById("statusFilter").value;
+            const search = document.getElementById("searchInput").value.toLowerCase();
 
-    vehicles.forEach(v => {
-        const imgSrc = v.image
-            ? `/MVRMS/client/images/vehicles/${v.image}`
-            : `/MVRMS/client/images/vehicles/default.jpg`;
+            let filtered = allVehicles.filter(v => {
+                const matchType =
+                    type === "all" ||
+                    v.type.type_name.trim().toLowerCase() === type.trim().toLowerCase();
 
-        const isAvailable = v.availability === "Available";
+                const matchStatus = status === "all" || v.availability === status;
+                const matchPrice = price === "all" || Number(v.daily_rate) <= Number(price);
+                const matchSearch = v.vehicle_name.toLowerCase().includes(search);
 
-        grid.innerHTML += `
+                return matchType && matchStatus && matchPrice && matchSearch;
+            });
+
+            renderVehicles(filtered);
+        }
+
+        function renderVehicles(vehicles) {
+            const grid = document.getElementById("vehiclesGrid");
+            grid.innerHTML = "";
+
+            if (vehicles.length === 0) {
+                grid.innerHTML = "<p>No vehicles found.</p>";
+                return;
+            }
+
+            vehicles.forEach(v => {
+                const imgSrc = v.image
+                    ? `/MVRMS/client/images/vehicles/${v.image}`
+                    : `/MVRMS/client/images/vehicles/default.jpg`;
+
+                const isAvailable = v.availability === "Available";
+
+                grid.innerHTML += `
             <div class="vehicle-card">
-                <img src="${imgSrc}" alt="${v.vehicle_name}" class="vehicle-img">
-
+                <img src="${imgSrc}" class="vehicle-img">
                 <h3>${v.vehicle_name}</h3>
                 <p>₱${v.daily_rate} / day</p>
                 <p>Status: <strong>${v.availability}</strong></p>
 
-                <button 
-                    ${!isAvailable ? "disabled" : ""}
+                <button ${!isAvailable ? "disabled" : ""}
                     onclick="reserveVehicle(${v.vehicle_id})">
                     ${isAvailable ? "Reserve" : "Rented"}
                 </button>
             </div>
         `;
-    });
-}
+            });
+        }
 
-/* ================= FETCH VEHICLES ================= */
-fetch("/MVRMS/api/get-available-vehicles.php")
-    .then(res => res.json())
-    .then(data => {
-        renderVehicles(data);
-    })
-    .catch(err => {
-        console.error("Vehicle load error:", err);
-    });
+        function reserveVehicle(vehicleId) {
+            window.location.href =
+                `/MVRMS/client/pages/client/make-reservation.html?vehicle_id=${vehicleId}`;
+        }
+    </script>
 
-/* ================= RESERVE ================= */
-function reserveVehicle(vehicleId) {
-    window.location.href =
-        `/MVRMS/client/pages/client/make-reservation.html?vehicle_id=${vehicleId}`;
-}
-</script>
+
 
 </body>
+
 </html>

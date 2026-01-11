@@ -4,53 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payments - Client | MVRMS</title>
+
     <link rel="stylesheet" href="/MVRMS/client/css/client.css">
     <link rel="icon" type="image/png" href="/MVRMS/client/images/logo.png">
 </head>
 <body>
-    <div class="dashboard-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="/MVRMS/client/images/logo.png" alt="Logo" class="sidebar-logo">
-                <h2>MVRMS</h2>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="/MVRMS/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
-                <a href="/MVRMS/client/pages/client/browse-vehicles.html" class="nav-item">Browse Vehicles</a>
-                <a href="/MVRMS/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
-                <a href="/MVRMS/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
-                <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
-                <a href="/MVRMS/client/pages/client/handle-payment.html" class="nav-item active">Payments</a>
-                <a href="/MVRMS/client/pages/client/profile.html" class="nav-item">Profile</a>
-                <a href="/MVRMS/client/pages/client/verifyid.html" class="nav-item">Verify ID</a>
-                <a href="/MVRMS/client/pages/login.html" class="nav-item logout">Logout</a>
-            </nav>
-        </aside>
 
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="search-bar">
-                    <input type="text" placeholder="Search...">
-                </div>
-                <div class="user-menu">
-                    <button class="notification-btn">🔔</button>
-                    <button class="settings-btn">⚙️</button>
-                    <div class="user-profile">
-                        <div class="user-avatar">👤</div>
-                        <div class="user-info">
-                            <span id="currentUsername">Client</span>
-                            <span class="user-role">Client</span>
-                        </div>
-                    </div>
-                </div>
-            </header>
+<div class="dashboard-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/MVRMS/client/images/logo.png" class="sidebar-logo">
+            <h2>MVRMS</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/MVRMS/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
+            <a href="/MVRMS/client/pages/client/browse-vehicles.html" class="nav-item">Browse Vehicles</a>
+            <a href="/MVRMS/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
+            <a href="/MVRMS/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
+            <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
+            <a href="/MVRMS/client/pages/client/handle-payment.html" class="nav-item active">Payments</a>
+            <a href="/MVRMS/client/pages/client/profile.html" class="nav-item">Profile</a>
+            <a href="/MVRMS/client/pages/login.html" class="nav-item logout">Logout</a>
+        </nav>
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="user-info">
+                <span id="currentUsername">Client</span>
+            </div>
+        </header>
 
             <div class="page-content">
-                <h1>Make Payment</h1>
+                <h1>Payments</h1>
 
+                <!-- MAIN WRAPPER (IMPORTANT) -->
                 <div class="payment-section">
+
+                    <!-- PENDING INVOICES -->
                     <div class="pending-invoices">
                         <h2>Pending Invoices</h2>
+
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -60,135 +62,185 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="invoicesTable">
-                                <!-- Invoices will be populated -->
+                            <tbody id="pendingInvoices">
+                                <!-- JS inserts here -->
                             </tbody>
                         </table>
                     </div>
 
+                    <!-- PAYMENT FORM -->
                     <div class="payment-form-section">
                         <h2>Payment Details</h2>
+
                         <form id="paymentForm">
+                            <input type="hidden" id="invoiceId">
+
                             <div class="form-group">
-                                <label for="paymentMethod">Payment Method:</label>
+                                <label>Payment Method</label>
                                 <select id="paymentMethod" required>
                                     <option value="">-- Select Payment Method --</option>
                                     <option value="gcash">GCash</option>
                                     <option value="bank">Bank Transfer</option>
                                     <option value="cash">Cash</option>
-                                    <option value="creditcard">Credit Card</option>
                                 </select>
                             </div>
 
-                            <div id="methodDetails"></div>
-
                             <div class="form-group">
-                                <label for="amount">Amount:</label>
-                                <input type="number" id="amount" placeholder="Enter amount" required>
+                                <label>Amount</label>
+                                <input type="number" id="amount" readonly required>
                             </div>
 
-                            <button type="submit" class="btn-primary">Process Payment</button>
+                            <button type="submit" class="btn-primary">
+                                Process Payment
+                            </button>
+                            <div id="methodDetails"></div>
                         </form>
                     </div>
-                </div>
 
-                <div class="payment-history">
-                    <h2>Payment History</h2>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Method</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTable">
-                            <tr>
-                                <td>Jan 8, 2025</td>
-                                <td>₱1,500</td>
-                                <td>GCash</td>
-                                <td><span class="badge completed">Paid</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
-        </main>
-    </div>
+    </main>
+</div>
 
-    <script src="/MVRMS/client/js/backend.js"></script>
-    <script>
-        function checkAuth() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser || currentUser.role !== 'client') {
-                window.location.href = '/client/pages/login.html?role=client';
+<!-- ================= SCRIPT ================= -->
+<script src="/MVRMS/client/js/backend.js"></script>
+<script>
+/* ================= PAYMENT METHOD FIELDS ================= */
+const paymentMethod = document.getElementById("paymentMethod");
+const methodDetails = document.getElementById("methodDetails");
+
+paymentMethod.addEventListener("change", () => {
+    methodDetails.innerHTML = "";
+
+    if (paymentMethod.value === "gcash") {
+        methodDetails.innerHTML = `
+            <div class="form-group">
+                <label>GCash Number</label>
+                <input type="text" id="gcashNumber" placeholder="09XXXXXXXXX" required>
+            </div>
+            <div class="form-group">
+                <label>Reference Number</label>
+                <input type="text" id="referenceNumber" required>
+            </div>
+        `;
+    }
+
+    if (paymentMethod.value === "bank") {
+        methodDetails.innerHTML = `
+            <div class="form-group">
+                <label>Bank Name</label>
+                <input type="text" id="bankName" required>
+            </div>
+            <div class="form-group">
+                <label>Account Number</label>
+                <input type="text" id="bankAccount" required>
+            </div>
+        `;
+    }
+});
+
+/* ================= LOAD DATA ================= */
+document.addEventListener("DOMContentLoaded", () => {
+
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser || !currentUser.user_id) {
+        alert("Please login again");
+        window.location.href = "/MVRMS/client/pages/login.html";
+        return;
+    }
+
+    document.getElementById("currentUsername").textContent = currentUser.username;
+
+    const table = document.getElementById("pendingInvoices"); // ✅ FIXED ID
+
+    fetch(`/MVRMS/api/get-pending-invoices.php?user_id=${currentUser.user_id}`)
+        .then(res => res.json())
+        .then(data => {
+
+            table.innerHTML = "";
+
+            if (!data || data.length === 0) {
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align:center;">
+                            No pending invoices
+                        </td>
+                    </tr>
+                `;
+                return;
             }
-            document.getElementById('currentUsername').textContent = currentUser.username;
+
+            data.forEach(inv => {
+                table.innerHTML += `
+                    <tr>
+                        <td>BK-${inv.reservation_id}</td>
+                        <td>₱${Number(inv.amount).toLocaleString()}</td>
+                        <td>${inv.due_date}</td>
+                        <td>
+                            <button onclick="selectInvoice(${inv.invoice_id}, ${inv.amount})">
+                                Pay
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Failed to load invoices");
+        });
+});
+
+/* ================= SELECT INVOICE ================= */
+function selectInvoice(invoiceId, amount) {
+    document.getElementById("invoiceId").value = invoiceId;
+    document.getElementById("amount").value = amount;
+}
+
+/* ================= PROCESS PAYMENT ================= */
+document.getElementById("paymentForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const invoiceId = document.getElementById("invoiceId").value;
+    const method = paymentMethod.value;
+    const amount = document.getElementById("amount").value;
+
+    if (!invoiceId || !method || !amount) {
+        alert("Please complete payment details");
+        return;
+    }
+
+    const payload = {
+        invoice_id: invoiceId,
+        method: method,
+        amount: amount,
+        gcash_number: document.getElementById("gcashNumber")?.value || null,
+        reference_no: document.getElementById("referenceNumber")?.value || null,
+        bank_name: document.getElementById("bankName")?.value || null,
+        bank_account: document.getElementById("bankAccount")?.value || null
+    };
+
+    fetch("/MVRMS/api/process-payment.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert("Payment successful!");
+            window.location.reload();
+        } else {
+            alert(data.message);
         }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Payment failed");
+    });
+});
+</script>
 
-        document.getElementById('paymentMethod').addEventListener('change', function() {
-            const methodDetails = document.getElementById('methodDetails');
-            const method = this.value;
 
-            let html = '';
-            switch(method) {
-                case 'gcash':
-                    html = `
-                        <div class="form-group">
-                            <label for="gcashPhone">GCash Number:</label>
-                            <input type="text" id="gcashPhone" placeholder="Enter your GCash number" required>
-                        </div>
-                    `;
-                    break;
-                case 'bank':
-                    html = `
-                        <div class="form-group">
-                            <label for="bankName">Bank Name:</label>
-                            <input type="text" id="bankName" placeholder="Enter bank name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="accountNumber">Account Number:</label>
-                            <input type="text" id="accountNumber" placeholder="Enter account number" required>
-                        </div>
-                    `;
-                    break;
-                case 'creditcard':
-                    html = `
-                        <div class="form-group">
-                            <label for="cardNumber">Card Number:</label>
-                            <input type="text" id="cardNumber" placeholder="Enter card number" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="expiryDate">Expiry Date:</label>
-                            <input type="text" id="expiryDate" placeholder="MM/YY" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="cvv">CVV:</label>
-                            <input type="text" id="cvv" placeholder="Enter CVV" required>
-                        </div>
-                    `;
-                    break;
-            }
-            methodDetails.innerHTML = html;
-        });
-
-        document.getElementById('paymentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const payment = {
-                id: 'PAY-' + Date.now(),
-                amount: parseInt(document.getElementById('amount').value),
-                method: document.getElementById('paymentMethod').value,
-                status: 'Completed',
-                createdAt: new Date().toISOString()
-            };
-
-            alert('Payment processed successfully! Payment ID: ' + payment.id);
-            document.getElementById('paymentForm').reset();
-        });
-
-        checkAuth();
-    </script>
 </body>
 </html>

@@ -90,125 +90,143 @@
 
     
 <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedVehicleId = urlParams.get("vehicle_id");
+document.addEventListener("DOMContentLoaded", () => {
 
-        console.log("Selected vehicle ID:", selectedVehicleId);
+    /* ================= GET URL PARAM ================= */
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedVehicleId = urlParams.get("vehicle_id");
+    console.log("Selected vehicle ID:", selectedVehicleId);
 
-        /* ================= AUTH CHECK ================= */
-        function checkAuth() {
-            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-            if (!currentUser || !currentUser.user_id) {
-                alert("Please login again.");
-                window.location.href = "/MVRMS/client/pages/login.html";
-                return null;
-            }
-            return currentUser;
-        }
+    /* ================= ELEMENTS ================= */
+    const vehicleSelect = document.getElementById("vehicleSelect");
+    const pickupDate = document.getElementById("pickupDate");
+    const returnDate = document.getElementById("returnDate");
+    const dailyRateEl = document.getElementById("dailyRate");
+    const numberOfDaysEl = document.getElementById("numberOfDays");
+    const totalCostEl = document.getElementById("totalCost");
+    const reservationForm = document.getElementById("reservationForm");
+    const pickupLocation = document.getElementById("pickupLocation");
+    const dropoffLocation = document.getElementById("dropoffLocation");
+    const notesField = document.getElementById("notes");
 
-        /* ================= LOAD VEHICLES ================= */
-        function loadVehicles() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const selectedVehicleId = urlParams.get("vehicle_id");
 
-            fetch("/MVRMS/api/get-available-vehicles.php")
-                .then(res => res.text())
-                .then(text => {
-                    if (!text) return [];
-                    return JSON.parse(text);
-                })
-                .then(data => {
-                    const select = document.getElementById("vehicleSelect");
-                    select.innerHTML = `<option value="">-- Select Vehicle --</option>`;
+    /* ================= AUTH CHECK ================= */
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser || !currentUser.user_id) {
+        alert("Please login again.");
+        window.location.href = "/MVRMS/client/pages/login.html";
+        return;
+    }
 
-                    data.forEach(v => {
-                        const opt = document.createElement("option");
-                        opt.value = v.vehicle_id;
-                        opt.dataset.rate = v.daily_rate;
-                        opt.textContent = `${v.vehicle_name} (₱${v.daily_rate}/day)`;
+    /* ================= LOAD VEHICLES ================= */
+    fetch("/MVRMS/api/get-available-vehicles.php")
+        .then(res => res.json())
+        .then(data => {
+            vehicleSelect.innerHTML = `<option value="">-- Select Vehicle --</option>`;
 
-                        if (selectedVehicleId && v.vehicle_id == selectedVehicleId) {
-                            opt.selected = true;
-                        }
+            data.forEach(v => {
+                const opt = document.createElement("option");
+                opt.value = v.vehicle_id;
+                opt.dataset.rate = v.daily_rate;
+                opt.textContent = `${v.vehicle_name} (₱${v.daily_rate}/day)`;
 
-                        select.appendChild(opt);
-                    });
-
-                    calculateCost();
-                })
-                .catch(err => console.error("Load vehicles error:", err));
-        }
-        
-        /* ================= COST CALCULATION ================= */
-        function calculateCost() {
-            const select = document.getElementById("vehicleSelect");
-            if (!select.value) return;
-
-            const rate = Number(select.selectedOptions[0].dataset.rate || 0);
-            const pickup = document.getElementById("pickupDate").value;
-            const dropoff = document.getElementById("returnDate").value;
-            if (!pickup || !dropoff) return;
-
-            const start = new Date(pickup);
-            const end = new Date(dropoff);
-            if (end <= start) return;
-
-            const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-            const total = days * rate;
-
-            document.getElementById("dailyRate").textContent = `₱${rate}`;
-            document.getElementById("numberOfDays").textContent = days;
-            document.getElementById("totalCost").textContent = `₱${total.toLocaleString()}`;
-        }
-
-        /* ================= SUBMIT RESERVATION ================= */
-        document.getElementById("reservationForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            const currentUser = checkAuth();
-            if (!currentUser) return;
-
-            const vehicleSelect = document.getElementById("vehicleSelect");
-
-            const payload = {
-                user_id: currentUser.user_id,
-                vehicle_id: vehicleSelect.value,
-                pickup_date: pickupDate.value,
-                return_date: returnDate.value,
-                pickup_location: pickupLocation.value,
-                dropoff_location: dropoffLocation.value,
-                notes: additionalNotes.value
-            };
-
-            fetch("/MVRMS/api/create-reservation.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "success") {
-                    alert("Reservation successful!");
-                    window.location.href = "/MVRMS/client/pages/client/browse-vehicles.html";
-                } else {
-                    alert(data.message);
+                if (selectedVehicleId && v.vehicle_id == selectedVehicleId) {
+                    opt.selected = true;
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Server error");
+
+                vehicleSelect.appendChild(opt);
             });
-        });
 
-        /* ================= EVENTS ================= */
-        vehicleSelect.addEventListener("change", calculateCost);
-        pickupDate.addEventListener("change", calculateCost);
-        returnDate.addEventListener("change", calculateCost);
+            calculateCost();
+        })
+        .catch(err => console.error("Load vehicles error:", err));
 
-        document.addEventListener("DOMContentLoaded", () => {
-            checkAuth();
-            loadVehicles();
-        });
+    /* ================= COST CALCULATION ================= */
+    function calculateCost() {
+        if (!vehicleSelect.value) return;
+        if (!pickupDate.value || !returnDate.value) return;
+
+        const rate = Number(vehicleSelect.selectedOptions[0].dataset.rate);
+        const start = new Date(pickupDate.value);
+        const end = new Date(returnDate.value);
+
+        if (end <= start) return;
+
+        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+        const total = days * rate;
+
+        dailyRateEl.textContent = `₱${rate}`;
+        numberOfDaysEl.textContent = days;
+        totalCostEl.textContent = `₱${total.toLocaleString()}`;
+    }
+
+    /* ================= EVENTS ================= */
+    vehicleSelect.addEventListener("change", calculateCost);
+    pickupDate.addEventListener("change", calculateCost);
+    returnDate.addEventListener("change", calculateCost);
+
+    /* ================= SUBMIT RESERVATION ================= */
+ reservationForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    if (!vehicleSelect.value || !pickupDate.value || !returnDate.value) {
+        alert("Please complete required fields.");
+        return;
+    }
+
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser || !currentUser.username) {
+        alert("Please login again.");
+        return;
+    }
+
+    const rate = Number(vehicleSelect.selectedOptions[0].dataset.rate);
+    const start = new Date(pickupDate.value);
+    const end = new Date(returnDate.value);
+
+    if (end <= start) {
+        alert("Return date must be after pickup date.");
+        return;
+    }
+
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const total = days * rate;
+
+    const payload = {
+        username: currentUser.username,
+        vehicle_id: vehicleSelect.value,
+        pickup_date: pickupDate.value,
+        return_date: returnDate.value,
+        pickup_location: pickupLocation.value,
+        dropoff_location: dropoffLocation.value,
+        notes: notesField.value,
+        total_days: days,
+        daily_rate: rate,
+        total_cost: total
+    };
+
+    fetch("/MVRMS/api/create-reservation.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert("Reservation confirmed!");
+            window.location.href =
+                "/MVRMS/client/pages/client/browse-vehicles.html";
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Server error");
+    });
+});
+
+});
 </script>
 
 </body>

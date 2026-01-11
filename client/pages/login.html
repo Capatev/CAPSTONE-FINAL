@@ -14,13 +14,13 @@
             <div class="header-content">
                 <div class="logo-section">
                     <a href="/MVRMS/client/index.html">
-                        <img src="../images/logo.png" alt="MVRMS" class="logo">
+                        <img src="/MVRMS/client/images/logo.png" alt="MVRMS" class="logo">
                         <h1>MVRMS</h1>
                     </a>
                 </div>
                 <nav class="nav">
-                    <a href="../index.html#about" class="nav-link">About Us</a>
-                    <a href="../pages/signup.html" class="nav-link">Sign Up</a>
+                    <a href="/MVRMS/client/index.html#about" class="nav-link">About Us</a>
+                    <a href="/MVRMS/client/pages/signup.html" class="nav-link">Sign Up</a>
                 </nav>
             </div>
         </div>
@@ -29,7 +29,7 @@
     <main class="auth-page">
         <div class="auth-container">
             <div class="auth-left">
-                <img src="../images/logo.png" alt="MVRMS" class="auth-logo">
+                <img src="/MVRMS/client/images/logo.png" alt="MVRMS" class="auth-logo">
                 <h2>Login Form</h2>
                 <p>Motor Vehicle Rental Services</p>
             </div>
@@ -64,7 +64,7 @@
                         <button type="submit" class="btn-login">Login</button>
                     </form>
 
-                    <p class="auth-link">Don't have an account? <a href="../pages/signup.html">Sign Up</a></p>
+                    <p class="auth-link">Don't have an account? <a href="/MVRMS/client/pages/signup.html">Sign Up</a></p>
                 </div>
             </div>
         </div>
@@ -76,7 +76,7 @@
         </div>
     </footer>
 
-    <script src="../js/backend.js"></script>
+    <script src="/MVRMS/client/js/backend.js"></script>
 <script>
 document.getElementById("loginForm").addEventListener("submit", function (e) {
     e.preventDefault();
@@ -93,26 +93,36 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     fetch("/MVRMS/api/login.php", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ username, password, role })
+        body: JSON.stringify({
+            username,
+            password,
+            role
+        })
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            localStorage.setItem("currentUser", JSON.stringify({
-            user_id: data.user.user_id,
-            username: data.user.username,
-            role: data.user.role
-        }));
 
-            window.location.href = "/MVRMS/client/pages/client/dashboard.html";
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch(err => {
-        console.error("Login error:", err);
-        alert("Server error. Check console.");
-    });
+        fetch("/MVRMS/api/login.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username,
+                password,
+                role
+            })
+        })
+        .then(res => res.text())
+        .then(text => {
+            console.log("RAW LOGIN RESPONSE:", text);
+            return JSON.parse(text);
+        })
+        .then(data => {
+            if (data.status === "success") {
+                localStorage.setItem("currentUser", JSON.stringify(data.user));
+                window.location.href = "/MVRMS/client/pages/client/dashboard.html";
+            } else {
+                alert(data.message);
+            }
+        });
+
 });
 </script>
 
