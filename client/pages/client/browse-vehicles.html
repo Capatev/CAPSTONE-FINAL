@@ -65,52 +65,57 @@
             </div>
 
             <!-- ✅ CONTAINER NA GINAGAMIT NG JS -->
-            <div class="vehicles-grid" id="vehiclesGrid"></div>
+            <div id="vehiclesGrid"></div>
 
         </div>
     </main>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    fetch("/MVRMS/api/browse-vehicles.php")
-        .then(res => res.json())
-        .then(data => renderVehicles(data))
-        .catch(err => console.error("Fetch error:", err));
-});
-
+/* ================= LOAD & RENDER VEHICLES ================= */
 function renderVehicles(vehicles) {
-    const container = document.getElementById("vehiclesGrid");
-    container.innerHTML = "";
+    const grid = document.getElementById("vehiclesGrid");
+    grid.innerHTML = "";
 
-    if (!vehicles || vehicles.length === 0) {
-        container.innerHTML = "<p>No vehicles available.</p>";
-        return;
-    }
+    vehicles.forEach(v => {
+        const imgSrc = v.image
+            ? `/MVRMS/client/images/vehicles/${v.image}`
+            : `/MVRMS/client/images/vehicles/default.jpg`;
 
-    vehicles.forEach(v => { 
-            const imagePath = v.image
-        ? `/MVRMS/client/images/vehicles/${v.image}`
-        : `/MVRMS/client/images/vehicles/default.jpg`;
+        const isAvailable = v.availability === "Available";
 
-
-        container.innerHTML += `
+        grid.innerHTML += `
             <div class="vehicle-card">
-                <img src="${imagePath}" alt="${v.vehicle_name}">
-                <div class="vehicle-info">
-                    <h3>${v.vehicle_name}</h3>
-                    <p>${v.brand} ${v.model}</p>
-                    <p class="vehicle-price">₱${v.daily_rate} / day</p>
-                    <span class="vehicle-status ${v.availability.toLowerCase()}">
-                        ${v.availability}
-                    </span>
-                </div>
-                <button onclick="reserveVehicle(${v.vehicle_id})">
-                    Reserve Now
+                <img src="${imgSrc}" alt="${v.vehicle_name}" class="vehicle-img">
+
+                <h3>${v.vehicle_name}</h3>
+                <p>₱${v.daily_rate} / day</p>
+                <p>Status: <strong>${v.availability}</strong></p>
+
+                <button 
+                    ${!isAvailable ? "disabled" : ""}
+                    onclick="reserveVehicle(${v.vehicle_id})">
+                    ${isAvailable ? "Reserve" : "Rented"}
                 </button>
             </div>
         `;
     });
+}
+
+/* ================= FETCH VEHICLES ================= */
+fetch("/MVRMS/api/get-available-vehicles.php")
+    .then(res => res.json())
+    .then(data => {
+        renderVehicles(data);
+    })
+    .catch(err => {
+        console.error("Vehicle load error:", err);
+    });
+
+/* ================= RESERVE ================= */
+function reserveVehicle(vehicleId) {
+    window.location.href =
+        `/MVRMS/client/pages/client/make-reservation.html?vehicle_id=${vehicleId}`;
 }
 </script>
 

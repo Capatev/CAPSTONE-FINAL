@@ -1,17 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Make Reservation - Client | MVRMS</title>
-    <link rel="stylesheet" href="/MVRMS/client/css/client.css">
-    <link rel="icon" type="image/png" href="/MVRMS/client/images/logo.png">
-</head>
-<body>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Make Reservation - Client | MVRMS</title>
+        <link rel="stylesheet" href="/MVRMS/client/css/client.css">
+        <link rel="icon" type="image/png" href="/MVRMS/client/images/logo.png">
+    </head>
+    <body>
+
     <div class="dashboard-layout">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="/MVRMS/client/images/logo.png" alt="Logo" class="sidebar-logo">
+                <img src="/MVRMS/client/images/logo.png" class="sidebar-logo">
                 <h2>MVRMS</h2>
             </div>
             <nav class="sidebar-nav">
@@ -22,8 +23,7 @@
                 <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
                 <a href="/MVRMS/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
                 <a href="/MVRMS/client/pages/client/profile.html" class="nav-item">Profile</a>
-                <a href="/MVRMS/client/pages/client/verifyid.html" class="nav-item">Verify ID</a>
-                <a href="/MVRMS/client/pages/login.html" class="nav-item logout">Logout</a>
+                <a href="../login.html" class="nav-item logout">Logout</a>
             </nav>
         </aside>
 
@@ -32,16 +32,8 @@
                 <div class="search-bar">
                     <input type="text" placeholder="Search...">
                 </div>
-                <div class="user-menu">
-                    <button class="notification-btn">🔔</button>
-                    <button class="settings-btn">⚙️</button>
-                    <div class="user-profile">
-                        <div class="user-avatar">👤</div>
-                        <div class="user-info">
-                            <span id="currentUsername">Client</span>
-                            <span class="user-role">Client</span>
-                        </div>
-                    </div>
+                <div class="user-info">
+                    <span id="currentUsername">Client</span>
                 </div>
             </header>
 
@@ -49,44 +41,42 @@
                 <h1>Make a Reservation</h1>
 
                 <form id="reservationForm" class="reservation-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="vehicleSelect">Select Vehicle:</label>
-                            <select id="vehicleSelect" required>
-                                <option value="">-- Select a vehicle --</option>
-                            </select>
-                        </div>
+
+                    <div class="form-group">
+                        <label>Select Vehicle</label>
+                        <select id="vehicleSelect" required>
+                            <option value="">-- Select Vehicle --</option>
+                        </select>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="pickupDate">Pickup Date:</label>
+                            <label>Pickup Date</label>
                             <input type="date" id="pickupDate" required>
                         </div>
                         <div class="form-group">
-                            <label for="returnDate">Return Date:</label>
+                            <label>Return Date</label>
                             <input type="date" id="returnDate" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="pickupLocation">Pickup Location:</label>
-                            <input type="text" id="pickupLocation" placeholder="Enter pickup location" required>
+                            <label>Pickup Location</label>
+                            <input type="text" id="pickupLocation" required>
                         </div>
                         <div class="form-group">
-                            <label for="dropoffLocation">Drop-off Location:</label>
-                            <input type="text" id="dropoffLocation" placeholder="Enter drop-off location" required>
+                            <label>Drop-off Location</label>
+                            <input type="text" id="dropoffLocation" required>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="additionalNotes">Additional Notes:</label>
-                        <textarea id="additionalNotes" placeholder="Any special requests..." rows="4"></textarea>
+                        <label>Notes</label>
+                        <textarea id="notes"></textarea>
                     </div>
 
                     <div class="cost-summary">
-                        <h3>Cost Summary</h3>
                         <p>Daily Rate: <span id="dailyRate">₱0</span></p>
                         <p>Number of Days: <span id="numberOfDays">0</span></p>
                         <p class="total">Total Cost: <span id="totalCost">₱0</span></p>
@@ -98,78 +88,128 @@
         </main>
     </div>
 
-    <script src="/MVRMS/client/js/backend.js"></script>
-    <script>
+    
+<script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedVehicleId = urlParams.get("vehicle_id");
+
+        console.log("Selected vehicle ID:", selectedVehicleId);
+
+        /* ================= AUTH CHECK ================= */
         function checkAuth() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser || currentUser.role !== 'client') {
-                window.location.href = '/client/pages/login.html?role=client';
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            if (!currentUser || !currentUser.user_id) {
+                alert("Please login again.");
+                window.location.href = "/MVRMS/client/pages/login.html";
+                return null;
             }
-            document.getElementById('currentUsername').textContent = currentUser.username;
+            return currentUser;
         }
 
-        function loadVehiclesSelect() {
-            const vehicles = getVehicles();
-            const select = document.getElementById('vehicleSelect');
-            select.innerHTML = '<option value="">-- Select a vehicle --</option>' + 
-                vehicles.map(v => `<option value="${v.id}" data-rate="${v.dailyRate}">${v.name} - ₱${v.dailyRate}/day</option>`).join('');
-        }
+        /* ================= LOAD VEHICLES ================= */
+        function loadVehicles() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedVehicleId = urlParams.get("vehicle_id");
 
+            fetch("/MVRMS/api/get-available-vehicles.php")
+                .then(res => res.text())
+                .then(text => {
+                    if (!text) return [];
+                    return JSON.parse(text);
+                })
+                .then(data => {
+                    const select = document.getElementById("vehicleSelect");
+                    select.innerHTML = `<option value="">-- Select Vehicle --</option>`;
+
+                    data.forEach(v => {
+                        const opt = document.createElement("option");
+                        opt.value = v.vehicle_id;
+                        opt.dataset.rate = v.daily_rate;
+                        opt.textContent = `${v.vehicle_name} (₱${v.daily_rate}/day)`;
+
+                        if (selectedVehicleId && v.vehicle_id == selectedVehicleId) {
+                            opt.selected = true;
+                        }
+
+                        select.appendChild(opt);
+                    });
+
+                    calculateCost();
+                })
+                .catch(err => console.error("Load vehicles error:", err));
+        }
+        
+        /* ================= COST CALCULATION ================= */
         function calculateCost() {
-            const vehicleSelect = document.getElementById('vehicleSelect');
-            const pickupDate = new Date(document.getElementById('pickupDate').value);
-            const returnDate = new Date(document.getElementById('returnDate').value);
+            const select = document.getElementById("vehicleSelect");
+            if (!select.value) return;
 
-            if (!vehicleSelect.value || !document.getElementById('pickupDate').value || !document.getElementById('returnDate').value) {
-                return;
-            }
+            const rate = Number(select.selectedOptions[0].dataset.rate || 0);
+            const pickup = document.getElementById("pickupDate").value;
+            const dropoff = document.getElementById("returnDate").value;
+            if (!pickup || !dropoff) return;
 
-            const days = Math.ceil((returnDate - pickupDate) / (1000 * 60 * 60 * 24));
-            const dailyRate = parseInt(vehicleSelect.options[vehicleSelect.selectedIndex].getAttribute('data-rate'));
-            const totalCost = days * dailyRate;
+            const start = new Date(pickup);
+            const end = new Date(dropoff);
+            if (end <= start) return;
 
-            document.getElementById('numberOfDays').textContent = Math.max(days, 1);
-            document.getElementById('dailyRate').textContent = '₱' + dailyRate;
-            document.getElementById('totalCost').textContent = '₱' + totalCost.toLocaleString();
+            const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            const total = days * rate;
+
+            document.getElementById("dailyRate").textContent = `₱${rate}`;
+            document.getElementById("numberOfDays").textContent = days;
+            document.getElementById("totalCost").textContent = `₱${total.toLocaleString()}`;
         }
 
-        document.getElementById('vehicleSelect').addEventListener('change', calculateCost);
-        document.getElementById('pickupDate').addEventListener('change', calculateCost);
-        document.getElementById('returnDate').addEventListener('change', calculateCost);
-
-        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+        /* ================= SUBMIT RESERVATION ================= */
+        document.getElementById("reservationForm").addEventListener("submit", function(e) {
             e.preventDefault();
 
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const vehicles = getVehicles();
-            const selectedVehicleId = document.getElementById('vehicleSelect').value;
-            const selectedVehicle = vehicles.find(v => v.id === selectedVehicleId);
+            const currentUser = checkAuth();
+            if (!currentUser) return;
 
-            const booking = {
-                id: 'BK-' + Date.now(),
-                clientUsername: currentUser.username,
-                vehicleId: selectedVehicleId,
-                vehicleName: selectedVehicle.name,
-                pickupDate: document.getElementById('pickupDate').value,
-                returnDate: document.getElementById('returnDate').value,
-                pickupLocation: document.getElementById('pickupLocation').value,
-                dropoffLocation: document.getElementById('dropoffLocation').value,
-                additionalNotes: document.getElementById('additionalNotes').value,
-                totalCost: parseInt(document.getElementById('totalCost').textContent.replace(/[₱,]/g, '')),
-                status: 'Active',
-                createdAt: new Date().toISOString()
+            const vehicleSelect = document.getElementById("vehicleSelect");
+
+            const payload = {
+                user_id: currentUser.user_id,
+                vehicle_id: vehicleSelect.value,
+                pickup_date: pickupDate.value,
+                return_date: returnDate.value,
+                pickup_location: pickupLocation.value,
+                dropoff_location: dropoffLocation.value,
+                notes: additionalNotes.value
             };
 
-            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            bookings.push(booking);
-            localStorage.setItem('bookings', JSON.stringify(bookings));
-
-            alert('Reservation confirmed! Booking ID: ' + booking.id);
-            window.location.href = 'my-bookings.html';
+            fetch("/MVRMS/api/create-reservation.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Reservation successful!");
+                    window.location.href = "/MVRMS/client/pages/client/browse-vehicles.html";
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Server error");
+            });
         });
 
-        checkAuth();
-        loadVehiclesSelect();
-    </script>
+        /* ================= EVENTS ================= */
+        vehicleSelect.addEventListener("change", calculateCost);
+        pickupDate.addEventListener("change", calculateCost);
+        returnDate.addEventListener("change", calculateCost);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            checkAuth();
+            loadVehicles();
+        });
+</script>
+
 </body>
 </html>

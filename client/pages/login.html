@@ -13,7 +13,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo-section">
-                    <a href="/client/index.html">
+                    <a href="/MVRMS/client/index.html">
                         <img src="../images/logo.png" alt="MVRMS" class="logo">
                         <h1>MVRMS</h1>
                     </a>
@@ -77,53 +77,44 @@
     </footer>
 
     <script src="../js/backend.js"></script>
-    <script>
-    document.getElementById("loginForm").addEventListener("submit", function (e) {
-        e.preventDefault();
+<script>
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
 
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value;
-        const role = document.getElementById("role").value;
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+    const role = document.getElementById("role").value;
 
-        if (!username || !password || !role) {
-            alert("Please fill out all fields");
-            return;
+    if (!username || !password || !role) {
+        alert("Please fill out all fields");
+        return;
+    }
+
+    fetch("/MVRMS/api/login.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ username, password, role })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            localStorage.setItem("currentUser", JSON.stringify({
+            user_id: data.user.user_id,
+            username: data.user.username,
+            role: data.user.role
+        }));
+
+            window.location.href = "/MVRMS/client/pages/client/dashboard.html";
+        } else {
+            alert(data.message);
         }
-
-        fetch("/MVRMS/api/login.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                username: username,
-                password: password,
-                role: role
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                // save session data
-                localStorage.setItem("currentUser", JSON.stringify(data.user));
-
-                // redirect based on role
-                const dashboardMap = {
-                    client: "/MVRMS/client/pages/client/dashboard.html",
-                    staff: "/MVRMS/staff/staff.html",
-                    admin: "/MVRMS/admin/admin.html",
-                    driver: "/MVRMS/driver/driver.html"
-                };
-
-                window.location.href = dashboardMap[data.user.role];
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Login failed");
-        });
+    })
+    .catch(err => {
+        console.error("Login error:", err);
+        alert("Server error. Check console.");
     });
-    </script>
+});
+</script>
 
 </body>
 </html>
