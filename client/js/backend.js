@@ -70,3 +70,31 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadVehicles();
   console.log("Client backend initialized with PHP API (FIXED)");
 });
+
+/* ================= RECEIPT UPLOAD ================= */
+window.submitReceipt = function (event) {
+  event.preventDefault(); // IMPORTANT
+
+  console.log("submitReceipt called");
+
+  const file = document.getElementById("receipt");
+  const invoice = document.getElementById("invoice");
+
+  if (!file || !file.files.length) {
+    alert("Please upload receipt");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("receipt", file.files[0]);
+  formData.append("invoice", invoice.value);
+
+  fetch("../../api/upload_receipt.php", {
+    method: "POST",
+    body: formData
+  })
+    .then(res => res.text())
+    .then(data => {
+      alert(data);
+    });
+};

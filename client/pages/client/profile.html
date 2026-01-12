@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,149 @@
     <link rel="stylesheet" href="/MVRMS/client/css/client.css">
     <link rel="icon" type="image/png" href="/MVRMS/client/images/logo.png">
 </head>
+<style>
+    /* PROFILE SECTION */
+    .profile-section {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 30px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    /* HEADER */
+    .profile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .avatar {
+        width: 70px;
+        height: 70px;
+        background: #eef2ff;
+        color: #4338ca;
+        font-size: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .profile-info h2 {
+        margin: 0;
+        font-size: 22px;
+        color: #111827;
+    }
+
+    .profile-status {
+        font-size: 14px;
+        color: #16a34a;
+    }
+
+    /* EDIT BUTTON */
+    .btn-edit {
+        padding: 8px 18px;
+        border-radius: 8px;
+        border: 1px solid #2563eb;
+        background: transparent;
+        color: #2563eb;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit:hover {
+        background: #2563eb;
+        color: #ffffff;
+    }
+
+    /* DETAILS GRID */
+    .profile-details {
+        margin-top: 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    /* DETAIL BOX */
+    .detail-box {
+        background: #f9fafb;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .detail-box h3 {
+        margin-bottom: 15px;
+        font-size: 16px;
+        color: #1f2937;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 8px;
+    }
+
+    .detail-box p {
+        margin: 8px 0;
+        font-size: 14px;
+        color: #374151;
+    }
+
+    /* BADGES */
+    .badge {
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge.verified {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge.pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge.rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* SECONDARY BUTTON */
+    .btn-secondary {
+        margin-top: 15px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: none;
+        background: #dc2626;
+        color: #ffffff;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background: #b91c1c;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+        .profile-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .btn-edit {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
 <body>
     <div class="dashboard-layout">
         <aside class="sidebar">
@@ -19,9 +163,9 @@
                 <a href="/MVRMS/client/pages/client/browse-vehicles.html" class="nav-item">Browse Vehicles</a>
                 <a href="/MVRMS/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
                 <a href="/MVRMS/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
-                <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
                 <a href="/MVRMS/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
                 <a href="/MVRMS/client/pages/client/profile.html" class="nav-item active">Profile</a>
+                <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
                 <a href="/MVRMS/client/pages/login.html" class="nav-item logout">Logout</a>
             </nav>
         </aside>
@@ -69,13 +213,15 @@
                         <div class="detail-box">
                             <h3>License Information</h3>
                             <p><strong>Driver License ID:</strong> <span id="licenseId">--</span></p>
-                            <p><strong>License Status:</strong> <span id="licenseStatus" class="badge verified">Verified</span></p>
+                            <p><strong>License Status:</strong> <span id="licenseStatus"
+                                    class="badge verified">Verified</span></p>
                         </div>
 
                         <div class="detail-box">
                             <h3>Account Security</h3>
                             <p><strong>Member Since:</strong> <span id="memberSince">--</span></p>
-                            <p><strong>Verification Status:</strong> <span id="verificationStatus" class="badge verified">Verified</span></p>
+                            <p><strong>Verification Status:</strong> <span id="verificationStatus"
+                                    class="badge verified">Verified</span></p>
                             <button class="btn-secondary">Change Password</button>
                         </div>
                     </div>
@@ -86,16 +232,56 @@
 
     <script src="/MVRMS/client/js/backend.js"></script>
     <script>
-        function checkAuth() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser || currentUser.role !== 'client') {
-                window.location.href = '/client/pages/login.html?role=client';
-            }
-            document.getElementById('currentUsername').textContent = currentUser.username;
-            document.getElementById('profileName').textContent = currentUser.username;
-        }
+        document.addEventListener("DOMContentLoaded", () => {
 
-        checkAuth();
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+            if (!currentUser || currentUser.role !== "client") {
+                alert("Please login again");
+                window.location.href = "/MVRMS/client/pages/login.html";
+                return;
+            }
+
+            // SAFE setter (prevents null errors)
+            function setText(id, value) {
+                const el = document.getElementById(id);
+                if (el) el.textContent = value ?? "--";
+            }
+
+            // basic user info
+            setText("currentUsername", currentUser.username);
+            setText("profileName", currentUser.username);
+
+            // FETCH PROFILE FROM DB
+            fetch(`/MVRMS/api/get-profile.php?user_id=${currentUser.user_id}`)
+                .then(res => res.json())
+                .then(res => {
+
+                    if (res.status !== "success") {
+                        alert("Failed to load profile");
+                        return;
+                    }
+
+                    const p = res.data;
+
+                    setText("fullName", p.full_name);
+                    setText("email", p.email);
+                    setText("phone", p.phone);
+                    setText("address", p.address);
+
+                    setText("licenseId", p.driver_license_no);
+                    setText("licenseStatus", p.license_status);
+                    setText("verificationStatus", p.verification_status);
+                    setText("memberSince", p.created_at);
+
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Server error while loading profile");
+                });
+        });
     </script>
+
 </body>
+
 </html>

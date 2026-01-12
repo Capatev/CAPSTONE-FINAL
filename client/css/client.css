@@ -107,6 +107,18 @@ body {
 .btn-primary:hover {
   background-color: #dc2626;
 }
+/* DARK MODE */
+.dark-mode {
+    background-color: #0f172a;
+    color: #e5e7eb;
+}
+
+.dark-mode .card,
+.dark-mode .dashboard-section,
+.dark-mode .data-table {
+    background-color: #1e293b;
+    color: #e5e7eb;
+}
 
 /* FOOTER */
 .footer {
@@ -486,10 +498,12 @@ body {
   background-color: #ffebee;
 }
 
-.main-content {
-  display: flex;
-  flex-direction: column;
+.main-content .page-content {
+  min-height: auto;
+  max-width: 1200px;
+  margin: 0 auto;
 }
+
 
 .top-bar {
   background-color: var(--topbar-bg);
@@ -1153,105 +1167,147 @@ body {
   margin-bottom: 20px;
 }
 
-.form-group 
-{
+.form-group {
   display: flex;
   flex-direction: column;
 }
 
 /* GRID */
 .vehicles-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 22px;
-    margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 22px;
+  margin-top: 20px;
 }
 
 /* CARD */
 .vehicle-card {
-    background: #ffffff;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    display: flex;
-    flex-direction: column;
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .vehicle-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 14px 32px rgba(0,0,0,0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.15);
 }
 
 /* IMAGE */
 .vehicle-card img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    background: #f3f4f6;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  background: #f3f4f6;
 }
 
 /* CONTENT */
 .vehicle-info {
-    padding: 15px;
-    flex: 1;
+  padding: 15px;
+  flex: 1;
 }
 
 /* TITLE */
 .vehicle-info h3 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1e3a8a;
-    margin-bottom: 6px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 6px;
 }
 
 /* SUBTEXT */
 .vehicle-info p {
-    font-size: 14px;
-    color: #4b5563;
-    margin: 3px 0;
+  font-size: 14px;
+  color: #4b5563;
+  margin: 3px 0;
 }
 
 /* PRICE */
 .vehicle-price {
-    font-size: 16px;
-    font-weight: 700;
-    color: #16a34a;
-    margin-top: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #16a34a;
+  margin-top: 8px;
 }
 
 /* STATUS BADGE */
 .vehicle-status {
-    margin-top: 10px;
-    display: inline-block;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
+  margin-top: 10px;
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .vehicle-status.available {
-    background: #dcfce7;
-    color: #166534;
+  background: #dcfce7;
+  color: #166534;
 }
 
 .vehicle-status.rented {
-    background: #fee2e2;
-    color: #991b1b;
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 /* BUTTON */
 .vehicle-card button {
-    border: none;
-    background: #2563eb;
-    color: white;
-    padding: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s ease;
+  border: none;
+  background: #2563eb;
+  color: white;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .vehicle-card button:hover {
-    background: #1d4ed8;
+  background: #1d4ed8;
+}
+
+/* PAYMENT SECTION */
+.payment-form {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.payment-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-process {
+  background: #dc3545;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 4px;
+}
+
+.btn-gcash {
+  background: #e53935;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 4px;
+}
+
+/* PAGE WRAPPER */
+.page-content {
+  padding: 30px;
+  background: #f4f6f9;  
+  min-height: 100vh;
+}
+
+.page-content h1 {
+  margin-bottom: 25px;
+  font-size: 26px;
+  color: #1f2937;
 }

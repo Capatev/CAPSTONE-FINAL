@@ -17,3 +17,9 @@ VALUES ($invoice_id,$user_id,$amount,'$method')
 $conn->query("UPDATE invoices SET status='Paid' WHERE invoice_id=$invoice_id");
 
 echo json_encode(["status"=>"success"]);
+
+$conn->query("
+    UPDATE reservations 
+    SET status = 'Completed' 
+    WHERE reservation_id = $reservation_id
+");

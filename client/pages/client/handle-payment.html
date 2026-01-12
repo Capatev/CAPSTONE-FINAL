@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,40 +9,41 @@
     <link rel="stylesheet" href="/MVRMS/client/css/client.css">
     <link rel="icon" type="image/png" href="/MVRMS/client/images/logo.png">
 </head>
+
 <body>
 
-<div class="dashboard-layout">
+    <div class="dashboard-layout">
 
-    <!-- ================= SIDEBAR ================= -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <img src="/MVRMS/client/images/logo.png" class="sidebar-logo">
-            <h2>MVRMS</h2>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="/MVRMS/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
-            <a href="/MVRMS/client/pages/client/browse-vehicles.html" class="nav-item">Browse Vehicles</a>
-            <a href="/MVRMS/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
-            <a href="/MVRMS/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
-            <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
-            <a href="/MVRMS/client/pages/client/handle-payment.html" class="nav-item active">Payments</a>
-            <a href="/MVRMS/client/pages/client/profile.html" class="nav-item">Profile</a>
-            <a href="/MVRMS/client/pages/login.html" class="nav-item logout">Logout</a>
-        </nav>
-    </aside>
-
-    <!-- ================= MAIN CONTENT ================= -->
-    <main class="main-content">
-
-        <!-- TOP BAR -->
-        <header class="top-bar">
-            <div class="search-bar">
-                <input type="text" placeholder="Search...">
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/MVRMS/client/images/logo.png" class="sidebar-logo">
+                <h2>MVRMS</h2>
             </div>
-            <div class="user-info">
-                <span id="currentUsername">Client</span>
-            </div>
-        </header>
+            <nav class="sidebar-nav">
+                <a href="/MVRMS/client/pages/client/dashboard.html" class="nav-item">Dashboard</a>
+                <a href="/MVRMS/client/pages/client/browse-vehicles.html" class="nav-item">Browse Vehicles</a>
+                <a href="/MVRMS/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
+                <a href="/MVRMS/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
+                <a href="/MVRMS/client/pages/client/handle-payment.html" class="nav-item active">Payments</a>
+                <a href="/MVRMS/client/pages/client/profile.html" class="nav-item">Profile</a>
+                <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item">Rental History</a>
+                <a href="/MVRMS/client/pages/login.html" class="nav-item logout">Logout</a>
+            </nav>
+        </aside>
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="main-content">
+
+            <!-- TOP BAR -->
+            <header class="top-bar">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="user-info">
+                    <span id="currentUsername">Client</span>
+                </div>
+            </header>
 
             <div class="page-content">
                 <h1>Payments</h1>
@@ -68,110 +70,85 @@
                         </table>
                     </div>
 
-                    <!-- PAYMENT FORM -->
-                    <div class="payment-form-section">
-                        <h2>Payment Details</h2>
+                    <form id="paymentForm">
 
-                        <form id="paymentForm">
-                            <input type="hidden" id="invoiceId">
+                        <input type="hidden" id="invoiceId">
 
-                            <div class="form-group">
-                                <label>Payment Method</label>
-                                <select id="paymentMethod" required>
-                                    <option value="">-- Select Payment Method --</option>
-                                    <option value="gcash">GCash</option>
-                                    <option value="bank">Bank Transfer</option>
-                                    <option value="cash">Cash</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label>Payment Method</label>
+                            <select id="paymentMethod" required>
+                                <option value="">-- Select Payment Method --</option>
+                                <option value="gcash">GCash</option>
+                                <option value="bank">Bank Transfer</option>
+                            </select>
+                        </div>
 
-                            <div class="form-group">
-                                <label>Amount</label>
-                                <input type="number" id="amount" readonly required>
-                            </div>
+                        <div class="form-group">
+                            <label>Amount</label>
+                            <input type="number" id="amount" readonly required>
+                        </div>
 
-                            <button type="submit" class="btn-primary">
-                                Process Payment
+                        <div id="methodDetails"></div>
+
+                        <div class="form-group">
+                            <label>Upload Receipt</label>
+                            <input type="file" id="receipt" required>
+                        </div>
+
+                        <div class="payment-buttons">
+                            <button type="submit" class="btn-primary">Process Payment</button>
+                            <button type="button" id="gcashBtn" class="btn-primary">
+                                Pay with GCash
                             </button>
-                            <div id="methodDetails"></div>
-                        </form>
-                    </div>
+                        </div>
 
+                    </form>
                 </div>
+
             </div>
+    </div>
     </main>
-</div>
+    </div>
+    <script src="/MVRMS/client/js/backend.js"></script>
+    <script>
+        console.log("Client backend initialized with PHP API (FIXED)");
 
-<!-- ================= SCRIPT ================= -->
-<script src="/MVRMS/client/js/backend.js"></script>
-<script>
-/* ================= PAYMENT METHOD FIELDS ================= */
-const paymentMethod = document.getElementById("paymentMethod");
-const methodDetails = document.getElementById("methodDetails");
+        const paymentForm = document.getElementById("paymentForm");
+        const paymentMethod = document.getElementById("paymentMethod");
+        const methodDetails = document.getElementById("methodDetails");
+        const gcashBtn = document.getElementById("gcashBtn");
 
-paymentMethod.addEventListener("change", () => {
-    methodDetails.innerHTML = "";
+        /* ================= LOAD PENDING INVOICES ================= */
+        document.addEventListener("DOMContentLoaded", loadPendingInvoices);
 
-    if (paymentMethod.value === "gcash") {
-        methodDetails.innerHTML = `
-            <div class="form-group">
-                <label>GCash Number</label>
-                <input type="text" id="gcashNumber" placeholder="09XXXXXXXXX" required>
-            </div>
-            <div class="form-group">
-                <label>Reference Number</label>
-                <input type="text" id="referenceNumber" required>
-            </div>
-        `;
-    }
+        function loadPendingInvoices() {
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            const table = document.getElementById("pendingInvoices");
 
-    if (paymentMethod.value === "bank") {
-        methodDetails.innerHTML = `
-            <div class="form-group">
-                <label>Bank Name</label>
-                <input type="text" id="bankName" required>
-            </div>
-            <div class="form-group">
-                <label>Account Number</label>
-                <input type="text" id="bankAccount" required>
-            </div>
-        `;
-    }
-});
+            if (!currentUser || !currentUser.user_id) {
+                alert("Session expired. Please login again.");
+                window.location.href = "/MVRMS/client/pages/login.html";
+                return;
+            }
 
-/* ================= LOAD DATA ================= */
-document.addEventListener("DOMContentLoaded", () => {
+            fetch(`/MVRMS/api/get-pending-invoices.php?user_id=${currentUser.user_id}`)
+                .then(res => res.json())
+                .then(data => {
+                    table.innerHTML = "";
 
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (!currentUser || !currentUser.user_id) {
-        alert("Please login again");
-        window.location.href = "/MVRMS/client/pages/login.html";
-        return;
-    }
-
-    document.getElementById("currentUsername").textContent = currentUser.username;
-
-    const table = document.getElementById("pendingInvoices"); // ✅ FIXED ID
-
-    fetch(`/MVRMS/api/get-pending-invoices.php?user_id=${currentUser.user_id}`)
-        .then(res => res.json())
-        .then(data => {
-
-            table.innerHTML = "";
-
-            if (!data || data.length === 0) {
-                table.innerHTML = `
+                    if (!data || data.length === 0) {
+                        table.innerHTML = `
                     <tr>
                         <td colspan="4" style="text-align:center;">
                             No pending invoices
                         </td>
                     </tr>
                 `;
-                return;
-            }
+                        return;
+                    }
 
-            data.forEach(inv => {
-                table.innerHTML += `
+                    data.forEach(inv => {
+                        table.innerHTML += `
                     <tr>
                         <td>BK-${inv.reservation_id}</td>
                         <td>₱${Number(inv.amount).toLocaleString()}</td>
@@ -183,64 +160,120 @@ document.addEventListener("DOMContentLoaded", () => {
                         </td>
                     </tr>
                 `;
-            });
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Failed to load invoices");
-        });
-});
-
-/* ================= SELECT INVOICE ================= */
-function selectInvoice(invoiceId, amount) {
-    document.getElementById("invoiceId").value = invoiceId;
-    document.getElementById("amount").value = amount;
-}
-
-/* ================= PROCESS PAYMENT ================= */
-document.getElementById("paymentForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const invoiceId = document.getElementById("invoiceId").value;
-    const method = paymentMethod.value;
-    const amount = document.getElementById("amount").value;
-
-    if (!invoiceId || !method || !amount) {
-        alert("Please complete payment details");
-        return;
-    }
-
-    const payload = {
-        invoice_id: invoiceId,
-        method: method,
-        amount: amount,
-        gcash_number: document.getElementById("gcashNumber")?.value || null,
-        reference_no: document.getElementById("referenceNumber")?.value || null,
-        bank_name: document.getElementById("bankName")?.value || null,
-        bank_account: document.getElementById("bankAccount")?.value || null
-    };
-
-    fetch("/MVRMS/api/process-payment.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            alert("Payment successful!");
-            window.location.reload();
-        } else {
-            alert(data.message);
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Failed to load invoices");
+                });
         }
-    })
-    .catch(err => {
-        console.error(err);
-        alert("Payment failed");
-    });
-});
-</script>
+
+        function selectInvoice(invoiceId, amount) {
+            document.getElementById("invoiceId").value = invoiceId;
+            document.getElementById("amount").value = amount;
+        }
 
 
+
+        /* ================= PAYMENT METHOD UI ================= */
+        paymentMethod.addEventListener("change", () => {
+            methodDetails.innerHTML = "";
+
+            if (paymentMethod.value === "gcash") {
+                methodDetails.innerHTML = `
+            <div class="form-group">
+                <label>GCash Number</label>
+                <input type="text" id="gcashNumber" required>
+            </div>
+        `;
+            }
+
+            if (paymentMethod.value === "bank") {
+                methodDetails.innerHTML = `
+            <div class="form-group">
+                <label>Bank Name</label>
+                <input type="text" id="bankName" required>
+            </div>
+            <div class="form-group">
+                <label>Account Number</label>
+                <input type="text" id="bankAccount" required>
+            </div>
+        `;
+            }
+        });
+
+        /* ================= PAY WITH GCASH ================= */
+        window.payWithGCash = function () {
+            const gcashNumber = document.getElementById("gcashNumber")?.value;
+
+            if (!gcashNumber) {
+                alert("Please enter GCash number first");
+                return;
+            }
+
+            // Attempt to open GCash app (deep link)
+            const gcashDeepLink = "gcash://sendmoney";
+
+            // Fallback timer
+            const timeout = setTimeout(() => {
+                alert(
+                    "GCash app not opened.\n\n" +
+                    "Please open the GCash app manually and send payment to:\n" +
+                    gcashNumber
+                );
+            }, 1500);
+
+            // Try to open GCash
+            window.location.href = gcashDeepLink;
+
+            // Clear fallback if success
+            window.addEventListener("blur", () => {
+                clearTimeout(timeout);
+            });
+        };
+
+
+        gcashBtn.addEventListener("click", window.payWithGCash);
+
+        /* ================= PROCESS PAYMENT ================= */
+        paymentForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const invoiceId = document.getElementById("invoiceId").value;
+            const amount = document.getElementById("amount").value;
+            const receipt = document.getElementById("receipt").files[0];
+
+            if (!invoiceId || !amount || !receipt) {
+                alert("Complete all payment details");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("invoice_id", invoiceId);
+            formData.append("amount", amount);
+            formData.append("method", paymentMethod.value);
+            formData.append("receipt", receipt);
+
+            fetch("/MVRMS/api/process-payment.php", {
+                method: "POST",
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Payment submitted for verification");
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Payment failed");
+                });
+        });
+
+    </script>
 </body>
+
 </html>

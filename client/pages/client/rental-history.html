@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="/MVRMS/client/css/client.css">
     <link rel="icon" type="image/png" href="/MVRMS/client/images/logo.png">
 </head>
+
 <body>
     <div class="dashboard-layout">
         <aside class="sidebar">
@@ -19,9 +21,9 @@
                 <a href="/MVRMS/client/pages/client/browse-vehicles.html" class="nav-item">Browse Vehicles</a>
                 <a href="/MVRMS/client/pages/client/make-reservation.html" class="nav-item">Make Reservation</a>
                 <a href="/MVRMS/client/pages/client/my-bookings.html" class="nav-item">My Bookings</a>
-                <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item active">Rental History</a>
                 <a href="/MVRMS/client/pages/client/handle-payment.html" class="nav-item">Payments</a>
                 <a href="/MVRMS/client/pages/client/profile.html" class="nav-item">Profile</a>
+                <a href="/MVRMS/client/pages/client/rental-history.html" class="nav-item active">Rental History</a>
                 <a href="/MVRMS/client/pages/login.html" class="nav-item logout">Logout</a>
             </nav>
         </aside>
@@ -31,18 +33,12 @@
                 <div class="search-bar">
                     <input type="text" placeholder="Search history...">
                 </div>
-                <div class="user-menu">
-                    <button class="notification-btn">🔔</button>
-                    <button class="settings-btn">⚙️</button>
-                    <div class="user-profile">
-                        <div class="user-avatar">👤</div>
-                        <div class="user-info">
-                            <span id="currentUsername">Client</span>
-                            <span class="user-role">Client</span>
-                        </div>
-                    </div>
+
+                <div class="user-info">
+                    <span id="currentUsername">Client</span>
                 </div>
             </header>
+
 
             <div class="page-content">
                 <h1>Rental History</h1>
@@ -75,15 +71,64 @@
 
     <script src="/MVRMS/client/js/backend.js"></script>
     <script>
-        function checkAuth() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser || currentUser.role !== 'client') {
-                window.location.href = '../../pages/login.html?role=client';
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+            if (!currentUser || !currentUser.user_id) {
+                alert("Please login again");
+                window.location.href = "/MVRMS/client/pages/login.html";
+                return;
             }
-            document.getElementById('currentUsername').textContent = currentUser.username;
+
+            fetch(`/MVRMS/api/get-rental-history.php?user_id=${currentUser.user_id}`)
+                .then(res => res.json())
+                .then(data => renderHistory(data))
+                .catch(err => {
+                    console.error(err);
+                    alert("Failed to load rental history");
+                });
+        });
+
+        function renderHistory(data) {
+            const table = document.getElementById("historyTable");
+            table.innerHTML = "";
+
+            if (!data.length) {
+                table.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align:center;">
+                    No rental history found
+                </td>
+            </tr>
+        `;
+                return;
+            }
+
+            data.forEach(r => {
+                table.innerHTML += `
+            <tr>
+                <td>${r.vehicle_name}</td>
+                <td>${new Date(r.pickup_date).toLocaleDateString()}</td>
+                <td>${r.total_days} days</td>
+                <td>₱${Number(r.total_cost).toLocaleString()}</td>
+                <td>
+                    <span class="badge completed">${r.status}</span>
+                </td>
+                <td>${renderStars(r.rating)}</td>
+            </tr>
+        `;
+            });
         }
 
-        checkAuth();
+        function renderStars(rating) {
+            let stars = "";
+            for (let i = 1; i <= 5; i++) {
+                stars += i <= rating ? "⭐" : "☆";
+            }
+            return stars;
+        }
     </script>
+
 </body>
+
 </html>
