@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Process Booking - MVRS Staff</title>
     <link rel="stylesheet" href="/MVRMS/staff/css/staff.css">
 </head>
+
 <body>
     <div class="container">
         <!-- Sidebar Navigation -->
@@ -31,7 +33,7 @@
                 <a href="/MVRMS/staff/pages/verify-clients.html" class="menu-item">
                     <span class="icon">✓</span>
                     <span>Verify Clients</span>
-                </a>    
+                </a>
                 <a href="/MVRMS/staff/pages/asset-management.html" class="menu-item">
                     <span class="icon">📦</span>
                     <span>Asset Management</span>
@@ -176,9 +178,258 @@
     <footer class="footer">
         <p>&copy; 2025 Motor Vehicle Rental Management System - Staff Interface.</p>
     </footer>
+    <script>
+        /* 🔥 FORCE OVERRIDE — kahit anong backend.js pa yan */
+        window.API_BASE_URL = "/MVRMS/api";
+
+        /* block old staff/php/api calls */
+        const _fetch = window.fetch;
+        window.fetch = function (url, options) {
+            if (typeof url === "string" && url.includes("/staff/php/api")) {
+                url = url.replace("/staff/php/api", "/api");
+            }
+            return _fetch(url, options);
+        };
+    </script>
 
     <script src="/MVRMS/staff/js/backend.js"></script>
-    <script src="/MVRMS/staff/js/shared-script.js"></script>
-    <script src="/MVRMS/staff/js/process-booking.js"></script>
+    <script>
+        document.getElementById("searchBooking")?.addEventListener("input", (e) => {
+            filterBookings(e.target.value);
+        });
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = "flex";
+            }
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        /**
+         * Process Booking Page Logic (INLINE)
+         * Uses global db from backend.js
+         */
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await initializeStaffDB();
+            populateVehicleSelect();
+            populateBookings();
+
+            document.getElementById("pickupDate")?.addEventListener("change", calculateCost);
+            document.getElementById("returnDate")?.addEventListener("change", calculateCost);
+            document.getElementById("vehicleSelect")?.addEventListener("change", calculateCost);
+
+            document
+                .getElementById("bookingForm")
+                ?.addEventListener("submit", submitBooking);
+        });
+
+        /* ===============================
+           VEHICLE SELECT
+        ================================ */
+        function populateVehicleSelect() {
+            const select = document.getElementById("vehicleSelect");
+            if (!select) return;
+
+            select.innerHTML = `<option value="">Choose a vehicle...</option>`;
+
+            const availableVehicles = db.vehicles.filter(
+                v => v.status === "available"
+            );
+
+            console.log("Available vehicles:", availableVehicles); // DEBUG
+
+            availableVehicles.forEach(v => {
+                const opt = document.createElement("option");
+                opt.value = v.id;
+                opt.textContent = `${v.brand} ${v.model} – ₱${v.dailyRate}/day`;
+                select.appendChild(opt);
+            });
+        }
+
+        /* ===============================
+           COST CALCULATION
+        ================================ */
+        function calculateCost() {
+            const vehicleId = document.getElementById("vehicleSelect")?.value;
+            const pickupDate = document.getElementById("pickupDate")?.value;
+            const returnDate = document.getElementById("returnDate")?.value;
+
+            if (!vehicleId || !pickupDate || !returnDate) return;
+
+            const vehicle = db.vehicles.find(v => v.id == vehicleId);
+            if (!vehicle) return;
+
+            const start = new Date(pickupDate);
+            const end = new Date(returnDate);
+            const days = Math.ceil((end - start) / 86400000) + 1;
+
+            document.getElementById("rentalDays").value = days;
+            document.getElementById("totalCost").value =
+                formatCurrency(days * vehicle.dailyRate);
+        }
+
+        /* ===============================
+           BOOKINGS TABLE
+        ================================ */
+        function populateBookings() {
+            const tbody = document.getElementById("bookingsTable");
+            tbody.innerHTML = "";
+
+            if (db.bookings.length === 0) {
+                tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align:center;padding:20px;">
+          No bookings found
+        </td>
+      </tr>
+    `;
+                return;
+            }
+
+            db.bookings.forEach((b) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+      <td>${b.booking_id}</td>
+      <td>${b.client_name}</td>
+      <td>${b.vehicle}</td>
+      <td>${formatDate(b.start_date)} - ${formatDate(b.end_date)}</td>
+      <td>${createBadge(b.status)}</td>
+      <td>${formatCurrency(b.amount)}</td>
+      <td>
+        <button class="btn btn-sm btn-success">Approve</button>
+      </td>
+    `;
+                tbody.appendChild(tr);
+            });
+        }
+
+
+
+        /* ===============================
+           CREATE BOOKING
+        ================================ */
+        async function submitBooking(e) {
+            e.preventDefault();
+
+            const clientName = document.getElementById("clientName").value;
+            const vehicleId = document.getElementById("vehicleSelect").value;
+            const pickupDate = document.getElementById("pickupDate").value;
+            const returnDate = document.getElementById("returnDate").value;
+            const notes = document.getElementById("notes").value;
+
+            const vehicle = db.vehicles.find(v => v.id == vehicleId);
+            if (!vehicle) return alert("Invalid vehicle");
+
+            const days =
+                Math.ceil((new Date(returnDate) - new Date(pickupDate)) / 86400000) + 1;
+
+            const amount = days * vehicle.dailyRate;
+
+            const res = await fetch("/MVRMS/api/reservations.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    clientId: 1, // staff-created booking
+                    clientName,
+                    vehicle: `${vehicle.brand} ${vehicle.model}`,
+                    pickupDate,
+                    returnDate,
+                    amount
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                alert("Booking created successfully");
+                closeBookingModal();
+                await initializeStaffDB();
+                populateBookings();
+            } else {
+                alert(data.message || "Failed to create booking");
+            }
+        }
+
+        /* ===============================
+           STATUS ACTIONS
+        ================================ */
+        async function approveBooking(id) {
+            await updateBookingStatus(id, "approved");
+            populateBookings();
+        }
+
+        async function rejectBooking(id) {
+            await updateBookingStatus(id, "rejected");
+            populateBookings();
+        }
+
+        /* ===============================
+           MODAL
+        ================================ */
+        function showNewBookingModal() {
+            openModal("bookingModal");
+        }
+
+        function closeBookingModal() {
+            closeModal("bookingModal");
+        }
+
+        function filterBookings(searchTerm = "") {
+            const tbody = document.getElementById("bookingsTable");
+            const status = document.getElementById("filterStatus").value;
+
+            tbody.innerHTML = "";
+
+            const filtered = db.bookings.filter(b => {
+                const matchSearch =
+                    b.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    String(b.booking_id).includes(searchTerm);
+
+                // ✅ ALL STATUS LOGIC
+                const matchStatus = status === "" || b.status === status;
+
+                return matchSearch && matchStatus;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align:center;padding:20px;">
+          No bookings found
+        </td>
+      </tr>
+    `;
+                return;
+            }
+
+            filtered.forEach(b => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+      <td>${b.booking_id}</td>
+      <td>${b.client_name}</td>
+      <td>${b.vehicle}</td>
+      <td>${formatDate(b.start_date)} - ${formatDate(b.end_date)}</td>
+      <td>${createBadge(b.status)}</td>
+      <td>${formatCurrency(b.amount)}</td>
+      <td>
+        <button class="btn btn-sm btn-success">Approve</button>
+      </td>
+    `;
+                tbody.appendChild(tr);
+            });
+        }
+
+    </script>
+
+
 </body>
+
 </html>

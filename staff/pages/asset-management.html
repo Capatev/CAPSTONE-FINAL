@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset Management - MVRS Staff</title>
     <link rel="stylesheet" href="/MVRMS/staff/css/staff.css">
 </head>
+
 <body>
     <div class="container">
         <!-- Sidebar Navigation -->
@@ -102,6 +104,26 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="asset-actions">
+                    <div class="asset-card" onclick="openAssetModal('maintenance')">
+                        <div class="asset-icon">🛠️</div>
+                        <h3>Log Maintenance</h3>
+                        <p>Record maintenance and service history of assets.</p>
+                    </div>
+
+                    <div class="asset-card" onclick="openAssetModal('condition')">
+                        <div class="asset-icon">📷</div>
+                        <h3>Asset Condition</h3>
+                        <p>Update condition and upload asset status photos.</p>
+                    </div>
+
+                    <div class="asset-card" onclick="openAssetModal('issues')">
+                        <div class="asset-icon">⚠️</div>
+                        <h3>Report Issues</h3>
+                        <p>Report damages, malfunctions, or asset problems.</p>
+                    </div>
+                </div>
+
 
                 <!-- Asset Summary -->
                 <div class="section" style="margin-top: 30px;">
@@ -181,6 +203,86 @@
             </form>
         </div>
     </div>
+    <!-- Asset Action Modal -->
+    <div id="assetActionModal" class="modal">
+        <div class="modal-content modal-md">
+            <div class="modal-header">
+                <h2 id="assetModalTitle">Asset Action</h2>
+                <button class="close-btn" onclick="closeAssetModal()">×</button>
+            </div>
+
+            <form id="assetActionForm">
+                <!-- Maintenance -->
+                <div class="modal-section" data-type="maintenance">
+                    <div class="form-group">
+                        <label>Asset</label>
+                        <input type="text" placeholder="Asset name / ID">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Maintenance Details</label>
+                        <textarea placeholder="Describe maintenance performed..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date">
+                    </div>
+                </div>
+
+                <!-- Condition -->
+                <div class="modal-section" data-type="condition">
+                    <div class="form-group">
+                        <label>Asset</label>
+                        <input type="text" placeholder="Asset name / ID">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Condition</label>
+                        <select>
+                            <option>Excellent</option>
+                            <option>Good</option>
+                            <option>Fair</option>
+                            <option>Poor</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Upload Photo</label>
+                        <input type="file">
+                    </div>
+                </div>
+
+                <!-- Issues -->
+                <div class="modal-section" data-type="issues">
+                    <div class="form-group">
+                        <label>Asset</label>
+                        <input type="text" placeholder="Asset name / ID">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Issue Description</label>
+                        <textarea placeholder="Describe the issue..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Severity</label>
+                        <select>
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                            <option>Critical</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeAssetModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -191,4 +293,31 @@
     <script src="/MVRMS/staff/js/shared-script.js"></script>
     <script src="/MVRMS/staff/js/asset-management.js"></script>
 </body>
+<script>
+    function openAssetModal(type) {
+        const modal = document.getElementById('assetActionModal');
+        const title = document.getElementById('assetModalTitle');
+        const sections = document.querySelectorAll('.modal-section');
+
+        sections.forEach(sec => sec.classList.remove('active'));
+
+        const activeSection = document.querySelector(`.modal-section[data-type="${type}"]`);
+        if (activeSection) activeSection.classList.add('active');
+
+        const titles = {
+            maintenance: 'Log Maintenance',
+            condition: 'Update Asset Condition',
+            issues: 'Report Asset Issue'
+        };
+
+        title.textContent = titles[type] || 'Asset Action';
+        modal.style.display = 'flex';
+    }
+
+    function closeAssetModal() {
+        document.getElementById('assetActionModal').style.display = 'none';
+    }
+
+</script>
+
 </html>

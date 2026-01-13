@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="icon" type="image/png" href="/MVRMS/client/images/logo.png">
 
 </head>
+
 <body>
     <header class="header">
         <div class="container">
@@ -47,7 +49,8 @@
 
                         <div class="form-group">
                             <label for="password">Password</label>
-                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                            <input type="password" id="password" name="password" placeholder="Enter your password"
+                                required>
                         </div>
 
                         <div class="form-group">
@@ -64,7 +67,8 @@
                         <button type="submit" class="btn-login">Login</button>
                     </form>
 
-                    <p class="auth-link">Don't have an account? <a href="/MVRMS/client/pages/signup.html">Sign Up</a></p>
+                    <p class="auth-link">Don't have an account? <a href="/MVRMS/client/pages/signup.html">Sign Up</a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -77,54 +81,53 @@
     </footer>
 
     <script src="/MVRMS/client/js/backend.js"></script>
-<script>
-document.getElementById("loginForm").addEventListener("submit", function (e) {
-    e.preventDefault();
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
+            e.preventDefault();
 
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value;
-    const role = document.getElementById("role").value;
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            const role = document.getElementById("role").value;
 
-    if (!username || !password || !role) {
-        alert("Please fill out all fields");
-        return;
-    }
-
-    fetch("/MVRMS/api/login.php", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            username,
-            password,
-            role
-        })
-    })
-
-        fetch("/MVRMS/api/login.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                username,
-                password,
-                role
-            })
-        })
-        .then(res => res.text())
-        .then(text => {
-            console.log("RAW LOGIN RESPONSE:", text);
-            return JSON.parse(text);
-        })
-        .then(data => {
-            if (data.status === "success") {
-                localStorage.setItem("currentUser", JSON.stringify(data.user));
-                window.location.href = "/MVRMS/client/pages/client/dashboard.html";
-            } else {
-                alert(data.message);
+            if (!username || !password || !role) {
+                alert("Please fill out all fields");
+                return;
             }
-        });
 
-});
-</script>
+            fetch("/MVRMS/api/login.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    username,
+                    password,
+                    role
+                })
+            })
+                .then(res => res.text())
+                .then(text => {
+                    console.log("RAW LOGIN RESPONSE:", text);
+                    return JSON.parse(text);
+                })
+                .then(data => {
+                    if (data.status === "success") {
+                        localStorage.setItem("currentUser", JSON.stringify(data.user));
+                        if (role === "client") {
+                            window.location.href = "/MVRMS/client/pages/client/dashboard.html";
+                        } else if (role === "staff") {
+                            window.location.href = "/MVRMS/staff/staff.html";
+                        } else if (role === "admin") {
+                            window.location.href = "/MVRMS/admin/admin.html";
+                        } else if (role === "driver") {
+                            window.location.href = "/MVRMS/driver/driver.html";
+                        }
+                    } else {
+                        alert(data.message);
+                    }
+                });
+
+        });
+    </script>
 
 </body>
+
 </html>

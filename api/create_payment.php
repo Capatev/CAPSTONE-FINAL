@@ -1,5 +1,5 @@
 <?php
-require "../config/db.php";
+require "/db.php";
 
 $user_id = $_POST['user_id'];
 $amount  = $_POST['amount'];
