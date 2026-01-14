@@ -55,7 +55,7 @@ function createBadge(status) {
 }
 
 function openModal(modalId) {
-  document.getElementById(modalId).style.display = "block"
+  document.getElementById(modalId).style.display = "flex"
 }
 
 function closeModal(modalId) {

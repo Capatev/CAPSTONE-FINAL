@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Clients - MVRS Staff</title>
     <link rel="stylesheet" href="/MVRMS/staff/css/staff.css">
 </head>
+
 <body>
     <div class="container">
         <!-- Sidebar Navigation -->
@@ -70,7 +72,8 @@
 
                     <div class="header-actions">
                         <div class="search-bar">
-                            <input type="text" id="searchClient" placeholder="Search by name or ID..." class="search-input">
+                            <input type="text" id="searchClient" placeholder="Search by name or ID..."
+                                class="search-input">
                         </div>
                         <div class="filter-group">
                             <select id="filterVerification" class="filter-select">
@@ -86,17 +89,16 @@
                         <thead>
                             <tr>
                                 <th>Client Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
                                 <th>ID Type</th>
+                                <th>ID Number</th>
+                                <th>ID Photo</th>
                                 <th>Status</th>
-                                <th>Submitted</th>
-                                <th>Action</th>
+                                <th>Date Submitted</th>
                             </tr>
                         </thead>
-                        <tbody id="clientsTable">
+                        <tbody id="verificationTable">
                             <tr>
-                                <td colspan="7" style="text-align: center; padding: 20px;">Loading clients...</td>
+                                <td colspan="6">Loading...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -147,5 +149,59 @@
     <script src="/MVRMS/staff/js/backend.js"></script>
     <script src="/MVRMS/staff/js/shared-script.js"></script>
     <script src="/MVRMS/staff/js/verify-clients.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            populateClients();
+        });
+
+        function populateClients() {
+            const tbody = document.getElementById("verificationTable");
+
+            if (!tbody) {
+                console.error("verificationTable tbody not found");
+                return;
+            }
+
+            fetch("/MVRMS/api/get-client-verifications.php")
+                .then(res => res.json())
+                .then(data => {
+                    tbody.innerHTML = "";
+
+                    if (data.length === 0) {
+                        tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">No submissions found</td>
+                    </tr>
+                `;
+                        return;
+                    }
+
+                    data.forEach(v => {
+                        tbody.innerHTML += `
+                    <tr>
+                        <td>${v.client_name}</td>
+                        <td>${v.id_type || '—'}</td>
+                        <td>${v.id_number ?? "-"}</td>
+                        <td>
+                            <a href="/MVRMS/${v.id_image}" target="_blank">View</a>
+                        </td>
+                        <td>${v.status}</td>
+                        <td>${v.submitted_at}</td>
+                    </tr>
+                `;
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    tbody.innerHTML = `
+                <tr>
+                    <td colspan="6">Failed to load data</td>
+                </tr>
+            `;
+                });
+        }
+    </script>
 </body>
+
 </html>

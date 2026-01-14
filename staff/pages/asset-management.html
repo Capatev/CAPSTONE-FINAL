@@ -51,7 +51,7 @@
                 </div>
             </nav>
 
-            <button class="logout-btn">Logout</button>
+            <a href="/MVRMS/client/pages/login.html" class="logout-btn">Logout</a>
         </aside>
 
         <!-- Main Content -->
@@ -293,31 +293,4 @@
     <script src="/MVRMS/staff/js/shared-script.js"></script>
     <script src="/MVRMS/staff/js/asset-management.js"></script>
 </body>
-<script>
-    function openAssetModal(type) {
-        const modal = document.getElementById('assetActionModal');
-        const title = document.getElementById('assetModalTitle');
-        const sections = document.querySelectorAll('.modal-section');
-
-        sections.forEach(sec => sec.classList.remove('active'));
-
-        const activeSection = document.querySelector(`.modal-section[data-type="${type}"]`);
-        if (activeSection) activeSection.classList.add('active');
-
-        const titles = {
-            maintenance: 'Log Maintenance',
-            condition: 'Update Asset Condition',
-            issues: 'Report Asset Issue'
-        };
-
-        title.textContent = titles[type] || 'Asset Action';
-        modal.style.display = 'flex';
-    }
-
-    function closeAssetModal() {
-        document.getElementById('assetActionModal').style.display = 'none';
-    }
-
-</script>
-
 </html>

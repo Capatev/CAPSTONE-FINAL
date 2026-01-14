@@ -51,7 +51,7 @@
                 </div>
             </nav>
 
-            <button class="logout-btn">Logout</button>
+            <a href="/MVRMS/client/pages/login.html" class="logout-btn">Logout</a>
         </aside>
 
         <!-- Main Content -->
@@ -279,11 +279,22 @@
         /* ===============================
            BOOKINGS TABLE
         ================================ */
-        function populateBookings() {
+        async function populateBookings() {
             const tbody = document.getElementById("bookingsTable");
+            tbody.innerHTML = `
+    <tr>
+      <td colspan="7" style="text-align:center;padding:20px;">
+        Loading bookings...
+      </td>
+    </tr>
+  `;
+
+            const res = await fetch("/MVRMS/api/reservations.php");
+            const bookings = await res.json();
+
             tbody.innerHTML = "";
 
-            if (db.bookings.length === 0) {
+            if (bookings.length === 0) {
                 tbody.innerHTML = `
       <tr>
         <td colspan="7" style="text-align:center;padding:20px;">
@@ -294,7 +305,7 @@
                 return;
             }
 
-            db.bookings.forEach((b) => {
+            bookings.forEach(b => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
       <td>${b.booking_id}</td>
@@ -304,7 +315,10 @@
       <td>${createBadge(b.status)}</td>
       <td>${formatCurrency(b.amount)}</td>
       <td>
-        <button class="btn btn-sm btn-success">Approve</button>
+        <button class="btn btn-sm btn-success"
+          onclick="approveBooking(${b.booking_id})">
+          Approve
+        </button>
       </td>
     `;
                 tbody.appendChild(tr);
